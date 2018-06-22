@@ -139,7 +139,6 @@ plot(x_filter(1,:),x_filter(3,:),'-r*');
 hold on; 
 plot(x_filter1(1,:),x_filter1(3,:),'-ro');
 hold off; 
-legend('1','2','3','4');
 axis([190 210 400 1400]);
 toc
 
