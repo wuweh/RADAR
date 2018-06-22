@@ -14,7 +14,7 @@ n=50;   %采样次数
 T=1;    %T为采样间隔
 MC_number=5;     %Monte Carlo仿真次数
                                                                              
-target_position=[1500 300 800 400; 1000 400 3000 300;9000 100 2000 400];        %目标的起始位置和速度(m,m/s)                   
+target_position=[1500 300 800 400; 1000 400 3000 300];        %目标的起始位置和速度(m,m/s)                   
 JPDAF(target_position,n,T,MC_number,c);     
 
 
@@ -52,9 +52,6 @@ for i=1:c
     end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%
-%%%%%  程序主体  %%%%%
-%%%%%%%%%%%%%%%%%%%%%%
 for M=1:MC_number
 %%%%%%%%%%%%%%%%%%%%    
 %%%  1.产生路径  %%%
@@ -132,9 +129,6 @@ for t=1:n
             NOISE_sum_b =[NOISE_sum_b Noise]; 
        end
        
-       if i==3
-            NOISE_sum_c =[NOISE_sum_c Noise]; 
-        end
     end
     
     b=zeros(1,2);
@@ -144,74 +138,7 @@ for t=1:n
     b(1)=data_measurement(2,1,t);
     b(2)=data_measurement(2,2,t);
     y1=[y1 b'];                  
-    b(1)=data_measurement(3,1,t);
-    b(2)=data_measurement(3,2,t);
-    y1=[y1 b']; 
     [n1,n2]=size(y1);
-    
-%     m = 0;
-%     for j=1:n2
-%         d=y1(:,j)-Z_predic(:,1);
-%         D=d'*inv(S(:,:,1))*d; 
-%         %判断是否满足门限要求（这里其实是按照卡方分布来求概率）
-%         if D<=g_sigma   
-%            m = m+1;
-%            arry_A(m)=D;         
-%            temp_A(m) = j;
-%            
-%         end
-%     end
-%     [~,index1] = min(arry_A);
-%     arry_A = zeros(1,m);
-%     
-%     m = 0;
-%     for j=1:n2
-%         d=y1(:,j)-Z_predic(:,2);
-%         D=d'*inv(S(:,:,2))*d; 
-%         %判断是否满足门限要求（这里其实是按照卡方分布来求概率）
-%         if D<=g_sigma    
-%            m = m+1;
-%            arry_B(m)=D;
-%            temp_B(m) = j;
-%         end
-%     end
-%     [~,index2] = min(arry_B); 
-%     arry_B = zeros(1,m);
-%     
-%     m = 0;
-%     for j=1:n2
-%         d=y1(:,j)-Z_predic(:,3);
-%         D=d'*inv(S(:,:,3))*d; 
-%         %判断是否满足门限要求（这里其实是按照卡方分布来求概率）
-%         if D<=g_sigma  
-%            m = m+1;
-%            arry_C(m)=D;
-%            temp_C(m) = j;
-%         end
-%     end
-%     [~,index3] = min(arry_C); 
-%     arry_C = zeros(1,m);
-  
-%     P_predic = A*P(:,:,1)*A'+G*Q*G';
-%     v = y1(:,temp_A(index1))-Z_predic(:,1);
-%     K(:,:,1) = P_predic*C'*inv(S(:,:,1));
-%     x_filter(:,1,t) = x_predic(:,1)+K(:,:,1)*v;
-%     x_filter(:,1,t)
-%     P(:,:,1)= P_predic-K(:,:,1)*S(:,:,1)*K(:,:,1)';    
-%     
-%     P_predic = A*P(:,:,2)*A'+G*Q*G';
-%     v = y1(:,temp_B(index2))-Z_predic(:,2);
-%     K(:,:,2) = P_predic*C'*inv(S(:,:,2));
-%     x_filter(:,2,t) = x_predic(:,2)+K(:,:,2)*v;
-%     x_filter(:,2,t)
-%     P(:,:,2)= P_predic-K(:,:,2)*S(:,:,2)*K(:,:,2)';
-%        
-%     P_predic = A*P(:,:,3)*A'+G*Q*G';
-%     v = y1(:,temp_C(index3))-Z_predic(:,3);
-%     K(:,:,3) = P_predic*C'*inv(S(:,:,3));
-%     x_filter(:,3,t) = x_predic(:,3)+K(:,:,3)*v;
-%     x_filter(:,3,t)
-%     P(:,:,3)= P_predic-K(:,:,3)*S(:,:,3)*K(:,:,3)';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%  3.产生观测确认矩阵Q2  %%%
@@ -237,11 +164,8 @@ for t=1:n
            m1=m1+1;                                                            %记录有效观测个数
         end
     end
-   
-%     Q2=Q1(1:m1,1:3); %执行完这一步之后，得到当前时刻的确认矩阵
-    
-    [U] = cheap_JPDA(m1,y,Z_predic,S);
-%      [U1] = JPDA_func(Q2,m1,ellipse_Volume,y,Z_predic,S)
+    Q2=Q1(1:m1,1:3);
+    [U] = JPDA_func(Q2,m1,ellipse_Volume,y,Z_predic,S);
 
 %%  7.Kalman滤波开始  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,15 +230,11 @@ for i=1:c
     if i ==2 
        plot(a(:),b(:),'b*')
     end
-    if i ==3
-       plot(a(:),b(:),'g*')
-    end
     hold on;
 end
 %目标a,b的杂波位置
 plot(NOISE_sum_a(1,:),NOISE_sum_a(2,:),'r.');
 plot(NOISE_sum_b(1,:),NOISE_sum_b(2,:),'b.');
-plot(NOISE_sum_c(1,:),NOISE_sum_c(2,:),'g.');
 
 hold on;
 %目标a,b的估计位置
@@ -324,9 +244,6 @@ plot(a,b,'r-');
 a(1:n) = x_filter(1,2,1:n);
 b(1:n) = x_filter(3,2,1:n);
 plot(a,b,'b-');
-a(1:n) = x_filter(1,3,1:n);
-b(1:n) = x_filter(3,3,1:n);
-plot(a,b,'g-');
 legend('目标a的观测位置','目标b的观测位置','目标a的杂波','目标b的杂波','目标a的估计位置','目标b的估计位置');grid;
 
 
@@ -392,66 +309,38 @@ plot([a_extra(2,n) a_extra(2,n)],[0 a_extra(1,n)],'b');
 hold on;
 plot(1:n,c1(2,:),'b:');
 
-a=0;
-for j=1:n
-    for i=1:MC_number                                                              %最小均方误差
-        a=(x_filter1(1,3,j,i)-data_measurement1(3,1,j))^2+(x_filter1(3,3,j,i)-data_measurement1(3,3,j))^2;
-        c1(3,j)=c1(3,j)+a;
-    end
-        c1(3,j)=sqrt(c1(3,j)/MC_number);
-end
-temp=c1(3,:);
-a_extra=zeros(2,n);
-b_extra=zeros(1,n);
-c_extra=zeros(1,n);
-a_extra(1,:)=temp;
-a_extra(2,:)=1:1:n;
-b_extra=a_extra(1,:);
-[c_extra,pos]=sort(b_extra);                                                       %pos为排序后的下标,c为第一行的排序结果;
-a_extra(2,:)=a_extra(2,pos);                                                       %第二行按照第一行排序的下标对应
-a_extra(1,:)=c_extra;                                                              %第一行结果重新赋给a 的第一行;
-str1=num2str(a_extra(2,n));
-str2=num2str(a_extra(1,n));
-str=strcat('\itN=',str1,'\itError=',str2,'(m)');
-text(a_extra(2,n),0.8*a_extra(1,n),str);
-hold on;
-plot([a_extra(2,n) a_extra(2,n)],[0 a_extra(1,n)],'g');
-hold on;
-plot(1:n,c1(3,:),'g:');
-
 xlabel('times'),ylabel('测量值与估计值均方差/m');
-legend('目标a的误差最大值','目标a的误差','目标b的误差最大值','目标b的误差','目标c的误差最大值','目标c的误差');grid;
+legend('目标a的误差最大值','目标a的误差','目标b的误差最大值','目标b的误差');grid;
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%  Revised on 26th June 2008 by wangzexun  %%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% figure;
-% extra11=zeros(1,n);
-% extra12=zeros(1,n);
-% extra13=zeros(1,n);
-% for j=1:n
-%     extra11(1,j)=sqrt(x_filter(1,1,j)-data_measurement1(1,1,j))^2+(x_filter(3,1,j)-data_measurement1(1,3,j))^2;
-%     extra12(1,j)=sqrt((data_measurement(1,1,j)-data_measurement1(1,1,j))^2+(data_measurement(1,2,j)-data_measurement1(1,3,j))^2);
-%     extra13(1,j)=extra12(1,j)/extra11(1,j);
-% end
-% plot(1:n,extra13(1,:),'k:'); 
-% xlabel('times'),ylabel('RMSE of a');
-% grid;
-% 
-% figure;
-% extra21=zeros(1,n);
-% extra22=zeros(1,n);
-% extra23=zeros(1,n);
-% for j=1:n
-%     extra21(1,j)=sqrt(x_filter(1,2,j)-data_measurement1(2,1,j))^2+(x_filter(3,2,j)-data_measurement1(2,3,j))^2;
-%     extra22(1,j)=sqrt((data_measurement(2,1,j)-data_measurement1(2,1,j))^2+(data_measurement(2,2,j)-data_measurement1(2,3,j))^2);
-%     extra23(1,j)=extra22(1,j)/extra21(1,j);
-% end
-% plot(1:n,extra23(1,:),'k:'); 
-% xlabel('times'),ylabel('RMSE of b');
-% grid;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  Revised on 26th June 2008 by wangzexun  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure;
+extra11=zeros(1,n);
+extra12=zeros(1,n);
+extra13=zeros(1,n);
+for j=1:n
+    extra11(1,j)=sqrt(x_filter(1,1,j)-data_measurement1(1,1,j))^2+(x_filter(3,1,j)-data_measurement1(1,3,j))^2;
+    extra12(1,j)=sqrt((data_measurement(1,1,j)-data_measurement1(1,1,j))^2+(data_measurement(1,2,j)-data_measurement1(1,3,j))^2);
+    extra13(1,j)=extra12(1,j)/extra11(1,j);
 end
+plot(1:n,extra13(1,:),'k:'); 
+xlabel('times'),ylabel('RMSE of a');
+grid;
 
+figure;
+extra21=zeros(1,n);
+extra22=zeros(1,n);
+extra23=zeros(1,n);
+for j=1:n
+    extra21(1,j)=sqrt(x_filter(1,2,j)-data_measurement1(2,1,j))^2+(x_filter(3,2,j)-data_measurement1(2,3,j))^2;
+    extra22(1,j)=sqrt((data_measurement(2,1,j)-data_measurement1(2,1,j))^2+(data_measurement(2,2,j)-data_measurement1(2,3,j))^2);
+    extra23(1,j)=extra22(1,j)/extra21(1,j);
+end
+plot(1:n,extra23(1,:),'k:'); 
+xlabel('times'),ylabel('RMSE of b');
+grid;
+end
 
 
 
@@ -578,36 +467,5 @@ function [U] = JPDA_func(Q2,m1,ellipse_Volume,y,Z_predic,S)
     U(m1+1,:)=1-sum(U(1:m1,1:c)); 
 end
 
-
-function [U] = cheap_JPDA(m1,y,Z_predic,S)
-    global c
-    Gjt = zeros(m1,c);
-    for i = 1:c
-        temp = 0;
-        for j = 1:m1
-            v1 = y(:,j)-Z_predic(:,i);
-            v = (-0.5*v1'*inv(S(:,:,i))*v1);
-            Gjt(j,i) = exp(v)/(2*3.14*sqrt(det(S(:,:,i))));
-            temp = temp + Gjt(j,i);
-        end
-        St(i) =  temp;
-    end
-    
-    B = 0;
-    for i = 1:c
-        ST = St(i);
-        for j = 1:m1
-            GJT = Gjt(j,i);
-            Sj = 0;
-            for k =1:c
-                Sj = Sj + Gjt(j,k);
-            end        
-            U(j,i) = GJT/((ST+Sj-GJT+B));
-        end
-    end
-      
-    for i = 1:c
-        U(j+1,i) = 1 - sum(U(1:j,i));
-    end
-end
+  
 
