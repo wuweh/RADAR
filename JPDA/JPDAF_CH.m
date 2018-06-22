@@ -92,8 +92,8 @@ for M=1:MC_number
             S(:,:,i)=C*P_predic*C'+R;   
 
             ellipse_Volume(i)= pi*g_sigma*sqrt(det(S(:,:,i)));         
-    %          number_returns=floor(ellipse_Volume(i)*gamma+1);        
-            number_returns = 2;       
+             number_returns=floor(ellipse_Volume(i)*gamma+1);        
+           % number_returns = 2;       
             side=sqrt((ellipse_Volume(i)*gamma+1)/gamma)/2;            
             Noise_x=x_predic(1,i)+side-2*rand(1,number_returns)*side;  
             Noise_y=x_predic(3,i)+side-2*rand(1,number_returns)*side;    
@@ -183,8 +183,7 @@ for M=1:MC_number
     end
 
 
-    % 做图部分
-    % x_filter=sum(x_filter1,4)/MC_number;   %滤波值作平均
+    x_filter=sum(x_filter1,4)/MC_number;  
     figure;
     for i=1:c
         a=zeros(1,n);
@@ -218,7 +217,7 @@ for M=1:MC_number
     a(1:n) = x_filter(1,3,1:n);
     b(1:n) = x_filter(3,3,1:n);
     plot(a,b,'g-');
-    legend('目标a的观测位置','目标b的观测位置','目标a的杂波','目标b的杂波','目标a的估计位置','目标b的估计位置');grid;
+    legend('Measure A','Measure B','Measure C','Noise A','Noise B','Noise C','Filter A','Filter B','Filter C');grid;
 
 
     figure;
@@ -307,8 +306,8 @@ for M=1:MC_number
     hold on;
     plot(1:n,c1(3,:),'g:');
 
-    xlabel('times'),ylabel('测量值与估计值均方差/m');
-    legend('目标a的误差最大值','目标a的误差','目标b的误差最大值','目标b的误差','目标c的误差最大值','目标c的误差');grid;
+    xlabel('times'),ylabel('Mean Square Error/m');
+    legend('MAX A','MSE A','MAX B','MSE B','MAX C','MSE C');grid;
 
 end
 
