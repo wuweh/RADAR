@@ -1,3 +1,3 @@
-# CFAR
+## CFAR
 ### 20180627
-	1）realize OS-CFAR、CA-CFAR algorithm
+	1）Release OS-CFAR、CA-CFAR algorithm
