@@ -1,6 +1,5 @@
 
 
-
 % CFAR算法比较
 %**************************************修改记录************************************
 %20180624:   1）基于DYC_CFAR算法
@@ -33,9 +32,7 @@ for i=1:64
     
     %第1点到第N_guard+1点恒虚警处理噪声由后面Nref个点决定
     for r_n = 1:N_guard+1
-%         if(temp(r_n)<(amd_factor*avg_whole))
-%             continue;
-%         end
+
         sum1 = 0;
         for j=1+N_guard+1:N_guard+N_ref
             sum1 = sum1+temp(j);
