@@ -1,3 +1,7 @@
-## CFAR
-### 20180627
-	1）Release OS-CFAR、CA-CFAR algorithm
+### CFAR
+#### 20180624:   
+	1）基于DYC_CFAR算法
+#### 20180624:   
+	1）加入改进后CA_CFAR算法
+#### 20180626:   
+	1）加入OS_CFAR算法
