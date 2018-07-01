@@ -1,11 +1,12 @@
-function [targetNum,local] = Range_CFAR(dotnum,DotLocal,data)
+function [targetNum,local] = Range_CFAR_CH(dotnum,DotLocal,data)
 L_r = size(data,2);
 N_guard = 2;
 N_ref = 8;
 flag = 0;
 targetNum = 0;
 local(1) = 0;
-OS_CFAR_Factor = 4.5;
+OS_CFAR_Factor = 5;
+delete_num = 3;
 % figure(2)
 % clf
 for i=1:dotnum
@@ -30,9 +31,10 @@ for i=1:dotnum
         end
         
         %去掉OS队列中最大的两个值
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);  
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);  
         OS_CFAR_gate(rangeIndex) = os_mean*OS_CFAR_Factor;   
 
         if temp(rangeIndex) > OS_CFAR_gate(rangeIndex)
@@ -60,9 +62,10 @@ for i=1:dotnum
         end
         
         %去掉OS队列中最大的两个值
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num); 
         OS_CFAR_gate(rangeIndex) = os_mean*OS_CFAR_Factor;   
 
         if temp(rangeIndex) > OS_CFAR_gate(rangeIndex)
@@ -92,9 +95,10 @@ for i=1:dotnum
         end
         
         %去掉OS队列中最大的两个值
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);  
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);   
         OS_CFAR_gate(rangeIndex) = os_mean*OS_CFAR_Factor;   
 
         if temp(rangeIndex) > OS_CFAR_gate(rangeIndex)

@@ -1,5 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 雷达信号处理Matlab算法
 % 雷达参数：
 %       波形带宽：200e6；
@@ -7,11 +7,12 @@
 %       调制频率：2.4096e+10；
 %       采样频率：1.739MHz；
 %       采样点数：130(有效线性段60个点)；
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 20180630：1）初版发布
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 20180701：1）修改Speed_CFAR&Range_CFAR算法参数
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 clc;
@@ -112,11 +113,11 @@ for m=1:2000
     title('ADC2');
 
     %速度维CFAR检测
-    [DotNum,DotLocal] = Speed_CFAR(N_1D_FFT/2,AmbData);
+    [DotNum,DotLocal] = Speed_CFAR_CH(N_1D_FFT/2,AmbData);
 
     %距离维CFAR检测
     AmbData_R = AmbData';
-    [targetNum,local1] = Range_CFAR(DotNum, DotLocal,AmbData_R);
+    [targetNum,local1] = Range_CFAR_CH(DotNum, DotLocal,AmbData_R);
 
     %开始求解目标信息
     row = length(AmbData(:,1));
@@ -139,19 +140,37 @@ for m=1:2000
         range = local1((n-1)*2+2);
         speed = local1((n-1)*2+1);
 
-        if(speed==1)&&((AmbData(range,1)>AmbData(range-1,1))&&(AmbData(range,speed)>AmbData(range+1,speed))&&(AmbData(range,speed)>AmbData(range,speed+1)))
+        if  (speed==1)&&...
+            ( (AmbData(range,1)>AmbData(range-1,1))&&...
+              (AmbData(range,speed)>AmbData(range+1,speed))&&...
+              (AmbData(range,speed)>AmbData(range,speed+1)))
+          
+            result1(range,speed) = AmbData(range,speed);
+            realLocal1(realTarget1*2+2) = range;
+            realLocal1(realTarget1*2+1) = speed;
+            realTarget1 = realTarget1 +1;  
+            
+        end
+        if  (speed==64)&&...
+            ( (AmbData(range,64)>AmbData(range-1,64))&&...
+              (AmbData(range,speed)>AmbData(range+1,speed))&&...
+              (AmbData(range,speed)>AmbData(range,speed-1)) )
+          
             result1(range,speed) = AmbData(range,speed);
             realLocal1(realTarget1*2+2) = range;
             realLocal1(realTarget1*2+1) = speed;
             realTarget1 = realTarget1 +1;  
         end
-        if(speed==64) && ((AmbData(range,64)>AmbData(range-1,64)) && (AmbData(range,speed)>AmbData(range+1,speed)) && (AmbData(range,speed)>AmbData(range,speed-1)))
-            result1(range,speed) = AmbData(range,speed);
-            realLocal1(realTarget1*2+2) = range;
-            realLocal1(realTarget1*2+1) = speed;
-            realTarget1 = realTarget1 +1;  
-        end
-        if(speed>1) && (speed<64) && (AmbData(range,speed)>AmbData(range-1,speed)) && (AmbData(range,speed)>AmbData(range,speed-1)) && (AmbData(range,speed)>AmbData(range+1,speed)) && (AmbData(range,speed)>AmbData(range,speed+1))
+        if  (speed>1) && (speed<64)&&...
+            (AmbData(range,speed)>AmbData(range-1,speed))&&...
+            (AmbData(range,speed)>AmbData(range+1,speed))&&...
+            (AmbData(range,speed)>AmbData(range,speed+1))&&...
+            (AmbData(range,speed)>AmbData(range,speed-1))&&...
+            (AmbData(range,speed)>AmbData(range-2,speed))&&...
+            (AmbData(range,speed)>AmbData(range+2,speed))&&...
+            (AmbData(range,speed)>AmbData(range,speed+2))&&...
+            (AmbData(range,speed)>AmbData(range,speed-2))
+        
             result1(range,speed) = AmbData(range,speed);
             realLocal1(realTarget1*2+2) = range;
             realLocal1(realTarget1*2+1) = speed;
@@ -183,7 +202,10 @@ for m=1:2000
     for n=1:targetNum
         range = local1((n-1)*2+2);
         speed = local1((n-1)*2+1);
-        if(AmbData(range,speed)>AmbData(range-1,speed)) && (AmbData(range,speed)>AmbData(range,speed-1)) && (AmbData(range,speed)>AmbData(range+1,speed))&&(AmbData(range,speed)>AmbData(range,speed+1))
+        if  (AmbData(range,speed)>AmbData(range-1,speed))&&...
+            (AmbData(range,speed)>AmbData(range,speed-1))&&...
+            (AmbData(range,speed)>AmbData(range+1,speed))&&...
+            (AmbData(range,speed)>AmbData(range,speed+1))
             result1(range,speed) = AmbData(range,speed);
             realLocal1(realTarget1*2+2) = range;
             realLocal1(realTarget1*2+1) = speed;
@@ -191,54 +213,63 @@ for m=1:2000
         end 
     end
 
+%     figure(1)
+%     subplot(3,2,4);
+%     Y = ((1:N_1D_FFT/2)-1)*fs/kt(2,4)*T*C/BW/2;
+%     X = (f2_x_axis)*1/T/64*lambda/2; 
+%     mesh(X,Y,result1(1:N_1D_FFT/2,1:64));
+%     xlabel('V m/s');
+%     ylabel('R m');
+%     zlabel('Amplitude');
+%     title(realTarget1);
     figure(1)
     subplot(2,2,4);
-    Y = ((1:N_1D_FFT/2)-1)*fs/kt(2,4)*T*C/BW/2;
-    X = (f2_x_axis)*1/T/64*lambda/2; 
-    mesh(X,Y,result1(1:N_1D_FFT/2,1:64));
-    xlabel('V m/s');
-    ylabel('R m');
-    zlabel('Amplitude');
+    mesh(f2_x_axis,1:N_1D_FFT/2,result1(1:N_1D_FFT/2,1:64));
+    xlabel('V/KHz');
+    ylabel('R/KHz');
+    zlabel('幅度值');
     title(realTarget1);
 
-    %目标距离、速度、角度解算
-    Range = zeros(32,1);
-    Speed = zeros(32,1);
-    Azi = zeros(32,1);
-    for i=1:realTarget1
-        % R = (f_points-1)*fs/FFT_N*T*C/BW/2; 
-        Range(i) = (realLocal1((i-1)*2+2)-1)*fs/kt(2,4)*T*C/BW/2;
-        % speed = ((1:dopple_fft)-1)*1/T/dopple_fft*lambda/2 (m/s);
-        Speed(i) = (realLocal1((i-1)*2+1)-33)*1/T/64*lambda/2;       
-        
-        %利用相位差测角度
-        temp_data1 = show_2D_data1(realLocal1((i-1)*2+2),realLocal1((i-1)*2+1))';
-        temp_data2 = show_2D_data2(realLocal1((i-1)*2+2),realLocal1((i-1)*2+1));
-        temp_data = temp_data1*temp_data2;
-        if real(temp_data)>0 && imag(temp_data)>0
-            y1 = atan(imag(temp_data)/real(temp_data));
-        end
-        if real(temp_data)>0 && imag(temp_data)<0
-            y1 = atan(imag(temp_data)/real(temp_data));
-        end
-        if real(temp_data)<0 && imag(temp_data)>0
-            y1 = atan(imag(temp_data)/real(temp_data))+pi;
-        end
-        if real(temp_data)<0 && imag(temp_data)<0
-            y1 = atan(imag(temp_data)/real(temp_data))-pi;
-        end
-
-        if y1>3.01
-            y1 = 3.01;
-        end
-
-        if y1<-3.01
-            y1 = -3.01;
-        end
-
-        y2 = y1*0.01245/2/0.006/pi;
-        Azi(i) = asin(y2)/3.14*180+1;
-    end
+%     %目标距离、速度、角度解算
+%     Range = zeros(32,1);
+%     Speed = zeros(32,1);
+%     Azi = zeros(32,1);
+%     for i=1:realTarget1
+%         % R = (f_points-1)*fs/FFT_N*T*C/BW/2; 
+%         Range(i) = (realLocal1((i-1)*2+2)-1)*fs/kt(2,4)*T*C/BW/2;
+%         % speed = ((1:dopple_fft)-1)*1/T/dopple_fft*lambda/2 (m/s);
+%         Speed(i) = (realLocal1((i-1)*2+1)-33)*1/T/64*lambda/2;       
+%         
+%         %利用相位差测角度
+%         temp_data1 = show_2D_data1(realLocal1((i-1)*2+2),realLocal1((i-1)*2+1))';
+%         temp_data2 = show_2D_data2(realLocal1((i-1)*2+2),realLocal1((i-1)*2+1));
+%         temp_data = temp_data1*temp_data2;
+%         if real(temp_data)>0 && imag(temp_data)>0
+%             y1 = atan(imag(temp_data)/real(temp_data));
+%         end
+%         if real(temp_data)>0 && imag(temp_data)<0
+%             y1 = atan(imag(temp_data)/real(temp_data));
+%         end
+%         if real(temp_data)<0 && imag(temp_data)>0
+%             y1 = atan(imag(temp_data)/real(temp_data))+pi;
+%         end
+%         if real(temp_data)<0 && imag(temp_data)<0
+%             y1 = atan(imag(temp_data)/real(temp_data))-pi;
+%         end
+% 
+%         if y1>3.01
+%             y1 = 3.01;
+%         end
+% 
+%         if y1<-3.01
+%             y1 = -3.01;
+%         end
+% 
+%         y2 = y1*0.01245/2/0.006/pi;
+%         Azi(i) = asin(y2)/3.14*180+1;
+%     end
+   
+    
     pause(0.5)
 end
 fclose(fid);

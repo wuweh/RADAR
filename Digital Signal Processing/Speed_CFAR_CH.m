@@ -1,4 +1,4 @@
-function [DotNum,DotLocal] = Speed_CFAR(L_r,AmbData)
+function [DotNum,DotLocal] = Speed_CFAR_CH(L_r,AmbData)
 DotNum = 0;
 N_guard = 2;
 N_ref = 6;
@@ -6,30 +6,34 @@ L_v = 64;
 
 DotLocal(1) = 0;
 DotLocal(2) = 0;
-OS_CFAR_Factor = 6.5;
+OS_CFAR_Factor = 7;
+delete_num = 3;
 % figure(3)
 % clf
 for i=1:L_r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%OS_CFAR算法%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     temp=AmbData(i,:);
-    %第1点到第N_guard+1点恒虚警处理噪声由后面Nref个点决定
+    %第1点到第N_guard+1点恒虚警处理噪声由其后面Nref个点决定
     for r_n = 1:N_guard+1
         Os_Index = 0;
-        for j=1+N_guard+1:N_guard+N_ref
+        %后面Nref个点求和
+        for j=r_n+N_guard+1:r_n+N_guard+N_ref
             Os_Index = Os_Index + 1;
             temp_OS_1(Os_Index) = temp(j);
         end
 
+        %排序（从小到大）
         for kk=1:Os_Index
             [max_os,index_os] = max(temp_OS_1);
             temp_OS_1(index_os) = 0;
             temp_OS_2(Os_Index-kk+1) = max_os;
         end
 
-        %去掉OS队列中最大的两个值
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
+        %去掉两个最大值
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);
         OS_CFAR_gate(r_n) = os_mean*OS_CFAR_Factor;   
 
         if temp(r_n) > OS_CFAR_gate(r_n)
@@ -61,10 +65,10 @@ for i=1:L_r
             temp_OS_2(Os_Index-kk+1) = max_os;
         end
 
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
-
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);
         OS_CFAR_gate(r_n) = os_mean*OS_CFAR_Factor; 
         
         if temp(r_n) > OS_CFAR_gate(r_n)
@@ -97,10 +101,10 @@ for i=1:L_r
             temp_OS_2(Os_Index-kk+1) = max_os;
         end
 
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
-
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);
         OS_CFAR_gate(r_n) = os_mean*OS_CFAR_Factor; 
         
         if temp(r_n) > OS_CFAR_gate(r_n)
@@ -134,9 +138,10 @@ for i=1:L_r
             temp_OS_2(Os_Index-kk+1) = max_os;
         end
         
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);
         OS_CFAR_gate(r_n) = os_mean*OS_CFAR_Factor; 
         
         if temp(r_n) > OS_CFAR_gate(r_n)
@@ -165,9 +170,10 @@ for i=1:L_r
             temp_OS_2(Os_Index-kk+1) = max_os;
         end
         
-        temp_OS_2(Os_Index) = 0;
-        temp_OS_2(Os_Index-1) = 0;
-        os_mean = sum(temp_OS_2)/(Os_Index-2);
+        for kkk = 1:delete_num
+            temp_OS_2(Os_Index-kkk+1) = 0;
+        end
+        os_mean = sum(temp_OS_2)/(Os_Index-delete_num);
         OS_CFAR_gate(r_n) = os_mean*OS_CFAR_Factor; 
 
         if temp(r_n) > OS_CFAR_gate(r_n)
