@@ -11,11 +11,11 @@ fs=100e6;
 t = 1/fs:1/fs:tstep;
 
 for n=1:N
-    x1(:,n)= A*exp(-1i*2*pi*(f0+(n-1)*fstep)*t);
+    x1(:,n)= A*exp(-1i*2*pi*(f0+(n-1)*fstep)*(n-1));
 end
 
 figure;
-plot(real(x1(:,5)))
+plot(real(x1(:,47)))
 figure
-a = fft(real(x1(:,47)),1024);
+a = fft((x1(:,47)),1024);
 plot(abs(a(1:512)))
