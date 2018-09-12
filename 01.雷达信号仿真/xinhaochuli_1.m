@@ -19,8 +19,8 @@ f=fs*(0:fft_N-1)/fft_N-fs/2;%从-fs/2 到 fs/2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% 参考信号 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 Sref=exp(1i*pi*u*t.^2);
-% figure
-% plot(real(Sref));
+figure
+plot(real(Sref));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% 回波信号 %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 Sb=rectpuls(t-2*R0/c,tp).*exp(1j*pi*u*(t-2*R0/c).^2); 
 % figure

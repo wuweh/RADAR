@@ -6,7 +6,7 @@ close all;
 
 FFT_R_N = 512;
 FFT_V_N = 64;
-f0 = 77e9
+f0 = 77e9;
 
 %target_1
 target_dist = 50; %distance  should be less than 200
@@ -39,8 +39,7 @@ fb_max = fr_max+fd_max  %maximum beat frequency
 
 % fs = 10*fb_max%sampling frequency
 fs = 20e6;
-t = 0:range_max*2/c:FFT_R_N; % sampling points
-
+t = 1:1:FFT_R_N; % sampling points
 
 Nsweep = 64; % pulses number
 for m = 1:1:Nsweep
@@ -51,18 +50,24 @@ for m = 1:1:Nsweep
     xr2(:,m) = exp(1i*2*pi*((2*target_dist1/lambda+2*target_speed1*(m-1)*tm/lambda)+...
     ((2*target_dist1/c*sweep_slope+2*target_speed1/lambda+2*target_speed1/c*sweep_slope*(m-1)*tm)*t)+...
     2*target_speed1/c*sweep_slope*t.^2));% echo signal_2
-
-    xr3(:,m) = exp(i*(2*pi*f0*t+pi*sweep_slope*t.^2));
     
     xr = xr1(:,m)+xr2(:,m);
     fft1(:,m) =fft(xr,FFT_R_N); % distance fft
 end
 
+ttt = 0:1/200e6:tm;
+% xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2);
+xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2+i*2*pi*f0*ttt);
 figure;
 subplot(121)
 plot(real(xr3(:,m)))
 subplot(122)
 plot(abs(fft(xr3(:,m),512)))
+[Pxx,F]=pyulear(xr3(:,m),12,length(xr3(:,m)),200e6);
+plot(F,10*log10(Pxx))
+xlabel('Frequency (Hz)');ylabel('Power Spectrum (dB)');
+set(gca,'ytick',[],'yticklabel',[]);
+axis tight;
 
 figure;
 subplot(221)

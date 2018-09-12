@@ -10,7 +10,7 @@ fs=50e6; R0=3e3;R1=2000;R2=3500;R=5000; c=3e8;
 f0=60e6;
 N=round(2*R/c*fs); fft_N=2^nextpow2(N); t=linspace(0,2*R/c,N);
 
-
+% t = 0:0.0001:
 %%%%%%%%%%%%%%%%%%%%%%% ²Î¿¼ÐÅºÅ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Sref=exp(2i*pi*f0*t).*exp(1i*pi*k*t.^2);
 Sref=exp(2i*pi*f0*t+1i*pi*k*t.^2);
