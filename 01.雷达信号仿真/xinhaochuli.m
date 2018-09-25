@@ -16,6 +16,7 @@ N=round(2*R/c*fs); fft_N=2^nextpow2(N); t=linspace(0,2*R/c,N);
 Sref=exp(2i*pi*f0*t+1i*pi*k*t.^2);
 figure
 plot(real(Sref));
+spectrogram(Sref,128,120,128,1e6)
 %%%%%%%%%%%%%%%%%%%%%%%%%%% »Ø²¨ÐÅºÅ %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 Sb0=exp(1j*pi*k*(t-2*R0/c).^2).*exp(2j*pi*f0*(t-2*R0/c)); 
 Sb1=exp(1j*pi*k*(t-2*R1/c).^2).*exp(2j*pi*f0*(t-2*R1/c)); 

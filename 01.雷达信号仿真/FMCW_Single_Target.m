@@ -109,7 +109,7 @@ title('FMCW signal'); axis tight;
 % 4096点FFT
 %采样频率为fs
 %发射波形频谱图
-subplot(212); spectrogram(s,32,16,32,fs,'yaxis');
+subplot(212); spectrogram(s,32,16,4096,fs,'yaxis');
 title('FMCW signal spectrogram');
 
 %% Target Model
