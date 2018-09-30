@@ -30,6 +30,6 @@ hold on;
 plot(aa(1,:),aa(2,:),'-r.'); 
 hold on;
 % plot(Z(1,:),Z(2,:),'-g.'); 
-legend('实际值','测量值','滤波值')
+% legend('实际值','测量值','滤波值')
 xlabel('x(m)');
 ylabel('y(m)')
