@@ -6,7 +6,6 @@ fc = 77e9;  %77GHz
 c = 3e8;      %光速
 lambda = c/fc;  %波长
 
-
 %由最远检测距离确定扫频时间
 range_max = 200;                                        %最远检测距离
 tm = 5.5*range2time(range_max,c);           %扫频时间
@@ -24,7 +23,7 @@ fr_max = range2beat(range_max,sweep_slope,c);
 
 %由最大速度引起的多普勒频率：fd_max = 2*v_max/lambda;
 %2*v_max是因为两车可能是相背行驶
-v_max = 230*1000/3600;
+v_max = 70;
 fd_max = speed2dop(2*v_max,lambda);
 
 %由此可以得出最终的最大差频频率
@@ -54,9 +53,9 @@ hwav = phased.FMCWWaveform('SweepTime',tm,'SweepBandwidth',bw, 'SampleRate',fs);
 % 形成波形
 s = step(hwav);
 %实部即信号的幅度！！！！
-subplot(211); plot(0:1/fs:tm-1/fs,real(s));
-xlabel('Time (s)'); ylabel('Amplitude (v)');
-title('FMCW signal'); axis tight;
+% subplot(211); plot(0:1/fs:tm-1/fs,real(s));
+% xlabel('Time (s)'); ylabel('Amplitude (v)');
+% title('FMCW signal'); axis tight;
 
 %spectrogram: 用短时傅里叶变换
 %16阶hanmming windows；
@@ -64,11 +63,11 @@ title('FMCW signal'); axis tight;
 % 4096点FFT
 %采样频率为fs
 %发射波形频谱图
-subplot(212); spectrogram(s,32,16,4096,fs,'yaxis');
-title('FMCW signal spectrogram');
+% subplot(212); spectrogram(s,32,16,4096,fs,'yaxis');
+% title('FMCW signal spectrogram');
 
 car_dist = 30;
-car_speed = 170*1000/3600;
+car_speed = 10;
 
 %目标车辆的RCS值
 car_rcs = db2pow(min(10*log10(car_dist)+5,20));
@@ -102,14 +101,14 @@ hrx = phased.ReceiverPreamp('Gain',rx_gain,'NoiseFigure',rx_nf,...
     'SampleRate',fs);
 
 %本车速度 100km/h和初始位置信息
-radar_speed = 100*1000/3600;
+radar_speed = 20;
 hradarplatform = phased.Platform('InitialPosition',[0;0;0.5],...
     'Velocity',[radar_speed;0;0]);
 
-hspec = dsp.SpectrumAnalyzer('SampleRate',fs,...
-    'PlotAsTwoSidedSpectrum',true,...
-    'Title','Spectrum for received and dechirped signal',...
-    'ShowLegend',true);
+% hspec = dsp.SpectrumAnalyzer('SampleRate',fs,...
+%     'PlotAsTwoSidedSpectrum',true,...
+%     'Title','Spectrum for received and dechirped signal',...
+%     'ShowLegend',true);
 
 %chirp个数
 Nsweep = 64;
@@ -145,46 +144,41 @@ plot(real(xd));
 title('Dechirp the signal');
 
 sweep_number = 64;
-samlpe_points = 2048;
+Range_FFT_P = 2048;
 
-fft1 = (zeros(samlpe_points,sweep_number));
-fft2 = (zeros(samlpe_points,sweep_number));
+fft_R = (zeros(Range_FFT_P,sweep_number));
+fft_V = (zeros(Range_FFT_P/2,sweep_number));
+
 %对实部做fft
 for n=1:sweep_number
-    fft1(:,n) = fft(real(xr(:,n)),samlpe_points);
-    fft1_f = ((1:samlpe_points)-1)*150e6/samlpe_points;
+    fft_R(:,n) = fft(real(xr(:,n)),Range_FFT_P);
     hold on;
 end
-
-for n=1:samlpe_points
-    fft2(n,:) = abs(fft(fft1(n,:),sweep_number));
-end
-
 %距离维频谱图
-freq = ((1:samlpe_points)-1)*fs/samlpe_points;
+freq = ((1:Range_FFT_P)-1)*fs/Range_FFT_P;
 range = freq*c*tm/bw/2;
 subplot(2,2,3)
-plot(range(1:samlpe_points/2),abs(fft1(1:samlpe_points/2)));
+plot(range(1:Range_FFT_P/2),abs(fft_R(1:Range_FFT_P/2)));
 
-%速度维频谱图
-dopple_f = ((1:sweep_number)-1)*1/tm/sweep_number*lambda/2*3.6;
-for n = 1:10   
-    subplot(2,2,4)
-    plot(dopple_f(1:sweep_number/2),abs(fft2(n,1:sweep_number/2)));
+%速度维FFT
+for n=1:1:Range_FFT_P/2
+    fft_V(n,:) = fft(real(fft_R(n,:)),sweep_number);
+    fft_V(n,:) = fftshift(fft_V(n,:));
+end
+
+dopple_f = ((1:sweep_number)-33)*1/tm/sweep_number*lambda/2;
+subplot(2,2,4)
+for n=1:Range_FFT_P/4
+    plot(dopple_f(1:64),abs(fft_V(n,1:64)));
     hold on;
 end
 
-figure;
-x = linspace(0,1/tm*lambda/2*3.6,sweep_number);
-y = linspace(0,fs/sweep_slope*c/2,samlpe_points);
-
-mesh(x,y,fft2);
-ylim([0 range_max]);
-xlim([0 330]);
-
- ylabel('distance:m');
- xlabel('velocity:Km/h');
- title('FMCW target detection')
+% figure;
+% mesh(dopple_f(1:sweep_number/2),range(1:Range_FFT_P/2),abs(fft_V(1:Range_FFT_P/2,1:sweep_number/2)));
+% view(3);
+% ylabel('distance:m');
+% xlabel('velocity:Km/h');
+% title('FMCW target detection')
  
  
  

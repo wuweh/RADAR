@@ -56,8 +56,8 @@ for m = 1:1:Nsweep
 end
 
 ttt = 0:1/200e6:tm;
-% xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2);
-xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2+i*2*pi*f0*ttt);
+xr3(:,m) = exp(1i*pi*sweep_slope*ttt.^2);
+% xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2+i*2*pi*f0*ttt);
 figure;
 subplot(121)
 plot(real(xr3(:,m)))
