@@ -23,7 +23,7 @@ fr_max = range2beat(range_max,sweep_slope,c);
 
 %由最大速度引起的多普勒频率：fd_max = 2*v_max/lambda;
 %2*v_max是因为两车可能是相背行驶
-v_max = 70;
+v_max = 230*1000/3600;
 fd_max = speed2dop(2*v_max,lambda);
 
 %由此可以得出最终的最大差频频率
@@ -67,7 +67,7 @@ s = step(hwav);
 % title('FMCW signal spectrogram');
 
 car_dist = 30;
-car_speed = 10;
+car_speed = 100*1000/3600;
 
 %目标车辆的RCS值
 car_rcs = db2pow(min(10*log10(car_dist)+5,20));
@@ -101,7 +101,7 @@ hrx = phased.ReceiverPreamp('Gain',rx_gain,'NoiseFigure',rx_nf,...
     'SampleRate',fs);
 
 %本车速度 100km/h和初始位置信息
-radar_speed = 20;
+radar_speed = 20*1000/3600;
 hradarplatform = phased.Platform('InitialPosition',[0;0;0.5],...
     'Velocity',[radar_speed;0;0]);
 
@@ -145,13 +145,15 @@ title('Dechirp the signal');
 
 sweep_number = 64;
 Range_FFT_P = 2048;
+Speed_FFT_P = 128;
+
 
 fft_R = (zeros(Range_FFT_P,sweep_number));
 fft_V = (zeros(Range_FFT_P/2,sweep_number));
 
 %对实部做fft
 for n=1:sweep_number
-    fft_R(:,n) = fft(real(xr(:,n)),Range_FFT_P);
+    fft_R(:,n) = fft((xr(:,n)),Range_FFT_P);
     hold on;
 end
 %距离维频谱图
@@ -161,25 +163,25 @@ subplot(2,2,3)
 plot(range(1:Range_FFT_P/2),abs(fft_R(1:Range_FFT_P/2)));
 
 %速度维FFT
+subplot(2,2,4)
 for n=1:1:Range_FFT_P/2
-    fft_V(n,:) = fft(real(fft_R(n,:)),sweep_number);
+    fft_V(n,1:Speed_FFT_P) = fft((fft_R(n,:)),Speed_FFT_P);
     fft_V(n,:) = fftshift(fft_V(n,:));
+%     plot(abs(fft_V(n,:)));
+%     hold on
 end
 
-dopple_f = ((1:sweep_number)-33)*1/tm/sweep_number*lambda/2;
+dopple_f = ((1:Speed_FFT_P)-Speed_FFT_P/2-1)*1/Speed_FFT_P/tm*lambda/2*3.6;
 subplot(2,2,4)
 for n=1:Range_FFT_P/4
-    plot(dopple_f(1:64),abs(fft_V(n,1:64)));
+    plot(dopple_f,abs(fft_V(n,:)));
     hold on;
 end
 
-% figure;
-% mesh(dopple_f(1:sweep_number/2),range(1:Range_FFT_P/2),abs(fft_V(1:Range_FFT_P/2,1:sweep_number/2)));
-% view(3);
-% ylabel('distance:m');
-% xlabel('velocity:Km/h');
-% title('FMCW target detection')
+figure;
+mesh(dopple_f,range(1:Range_FFT_P/2),abs(fft_V(1:Range_FFT_P/2,1:Speed_FFT_P)));
+view(3);
+ylabel('distance:m');
+xlabel('velocity:Km/h');
+title('FMCW target detection');
  
- 
- 
- %解算目标
