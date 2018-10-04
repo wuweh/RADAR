@@ -402,7 +402,7 @@ for n=1:1:Range_FFT_P/2
     fft_V(n,:) = fftshift(fft_V(n,:));
 end
 
-dopple_f = ((1:Speed_FFT_P)-Speed_FFT_P/2-1)*1/Speed_FFT_P/tm*lambda/2;
+dopple_f = ((1:Speed_FFT_P)-Speed_FFT_P/2-1)*1/Speed_FFT_P/tm*lambda/2*3.6;
 subplot(2,2,4)
 for n=1:Range_FFT_P/4
     plot(dopple_f(1:Speed_FFT_P),abs(fft_V(n,1:Speed_FFT_P)));

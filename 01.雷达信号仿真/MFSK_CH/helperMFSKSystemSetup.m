@@ -24,24 +24,30 @@ fd_max = speed2dop(2*v_max,lambda);
 
 fb_max = fr_max+fd_max;
 
+
 fs = max(2*fb_max,bw);
+
 
 fmcwwaveform = phased.FMCWWaveform('SweepTime',tm,'SweepBandwidth',bw,...
     'SampleRate',fs,'SweepDirection','Triangle');
 
 car_dist = 50;
-car_speed = 96*1000/3600;
+car_speed = 20*1000/3600;
 car_rcs = db2pow(min(10*log10(car_dist)+5,20));
 
 truck_dist = 55;
-truck_speed = -70*1000/3600;
+truck_speed = 40*1000/3600;
 truck_rcs = db2pow(min(10*log10(truck_dist)+5,20));
 
-tgtpos = [[car_dist;0;0],[truck_dist;0;0]];
-tgtvel = [[car_speed;0;0],[truck_speed;0;0]];
+bike_dist = 65;
+bike_speed = -60*1000/3600;
+bike_rcs = db2pow(min(10*log10(bike_dist)+5,20));
+
+tgtpos = [[car_dist;0;0],[truck_dist;0;0],[bike_dist;0;0]];
+tgtvel = [[car_speed;0;0],[truck_speed;0;0],[bike_speed;0;0]];
 tgtmotion = phased.Platform('InitialPosition',tgtpos,'Velocity',tgtvel);
 
-tgtrcs = [car_rcs,truck_rcs];
+tgtrcs = [car_rcs,truck_rcs,bike_rcs];
 target = phased.RadarTarget('MeanRCS',tgtrcs,'PropagationSpeed',c,...
     'OperatingFrequency',fc);
 
@@ -61,7 +67,7 @@ transmitter = phased.Transmitter('PeakPower',tx_ppower,'Gain',tx_gain);
 receiver = phased.ReceiverPreamp('Gain',rx_gain,'NoiseFigure',rx_nf,...
     'SampleRate',fs);
 
-radar_speed = 80*1000/3600;
+radar_speed = 60*1000/3600;
 sensormotion = phased.Platform('Velocity',[radar_speed;0;0]);
 
 

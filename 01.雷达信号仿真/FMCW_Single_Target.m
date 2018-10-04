@@ -2,13 +2,13 @@ clc;
 clear all;
 close all;
 
-fc = 77e9;  %77GHz
-c = 3e8;      %光速
-lambda = c/fc;  %波长
+fc = 77e9; 
+c = 3e8;     
+lambda = c/fc;  
 
 %由最远检测距离确定扫频时间
-range_max = 200;                                        %最远检测距离
-tm = 5.5*range2time(range_max,c);           %扫频时间
+range_max = 200;               
+tm = 5.5*range2time(range_max,c);      %扫频时间
 
 % 距离分辨率（range resolution) = c * Tp / 2 
 % range resolution = C/(2*B);
@@ -68,19 +68,14 @@ s = step(hwav);
 
 car_dist = 30;
 car_speed = 100*1000/3600;
-
-%目标车辆的RCS值
 car_rcs = db2pow(min(10*log10(car_dist)+5,20));
 
-%c指的是光速，fc指的是载波频率
 hcar = phased.RadarTarget('MeanRCS',car_rcs,'PropagationSpeed',c,...
     'OperatingFrequency',fc);
 
 %定义目标车辆的初始位置[x,y,z]和初始速度[vx,vy,vz]
 hcarplatform = phased.Platform('InitialPosition',[car_dist;5;0.5],...
     'Velocity',[car_speed;0;0]);
-
-% The propagation model is assumed to be free space.
 
 hchannel = phased.FreeSpace('PropagationSpeed',c,...
     'OperatingFrequency',fc,'SampleRate',fs,'TwoWayPropagation',true);
