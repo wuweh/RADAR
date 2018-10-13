@@ -1,3 +1,5 @@
+clear all;
+close all;
 clc;
 kx = .01; 
 ky = .05; 	% 阻尼系数
@@ -47,10 +49,10 @@ for k=1:len-1
     %计算量测雅克比矩阵
     Hk = JacobianH(X(k,:));
     
-    fX = fff(X(k,:), kx, ky, g, Ts)
-    hfX = hhh(fX, Ts)
-    fX1= X(k+1,:)'
-    hfx1 = Z(k+1,:)'
+    fX = fff(X(k,:), kx, ky, g, Ts);
+    hfX = hhh(fX, Ts);
+    fX1= X(k+1,:)';
+    hfx1 = Z(k+1,:)';
     [Xk, Pk, Kk] = ekf(eye(4)+Ft*Ts, Qk, fX, Pk, Hk, Rk, Z(k,:)'-hfX);
     X_est(k,:) = Xk';
 end

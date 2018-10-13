@@ -112,6 +112,7 @@ for t=1:n
     d=[]; 
     m=0; 
     
+    %判断量测点是否与当前航迹相关（卡方值）
     for j=1:(number_returns+1)     
         d=y1(:,j)-Z_predic; 
         D=d'*inv(S)*d;  
