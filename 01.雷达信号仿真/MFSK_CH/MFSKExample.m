@@ -29,9 +29,9 @@ mfskwaveform =  phased.MFSKWaveform(...
 %ÏÔÊ¾²¨ÐÎÆµÆ×
 numsamp_step = round(mfskwaveform.SampleRate*mfskwaveform.StepTime);
 sig_display = mfskwaveform();
-spectrogram(sig_display(1:8192),kaiser(3*numsamp_step,100),...
-    ceil(2*numsamp_step),linspace(0,4e6,2048),mfskwaveform.SampleRate,...
-    'yaxis','reassigned','minthreshold',-60)
+% spectrogram(sig_display(1:8192),kaiser(3*numsamp_step,100),...
+%     ceil(2*numsamp_step),linspace(0,4e6,2048),mfskwaveform.SampleRate,...
+%     'yaxis','reassigned','minthreshold',-60)
 
 %%
 % Next, simulate the return of the system. Again, only 1 sweep is needed to
@@ -67,8 +67,8 @@ num_xf_samp = size(xf_dechirp,1);
 beatfreq_vec = (0:num_xf_samp-1).'/num_xf_samp*fs_dechirp;
 
 figure;
-plot(beatfreq_vec/1e3,abs(xf_dechirp(:,1)),'-b*');hold on;grid on;
-plot(beatfreq_vec/1e3,abs(xf_dechirp(:,2)),'-r*');hold on;grid on;
+plot(beatfreq_vec(1:100)/1e3,abs(xf_dechirp(1:100,1)),'-b*');hold on;grid on;
+plot(beatfreq_vec(1:100)/1e3,abs(xf_dechirp(1:100,2)),'-r*');hold on;grid on;
 ylabel('Magnitude');
 title('Frequency spectrum for sweep');
 xlabel('Frequency (kHz)')

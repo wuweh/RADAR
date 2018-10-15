@@ -18,19 +18,16 @@ kesi2 = -eye(n);
 kesi = [kesi1,kesi2]*(sqrt(m/2)); 
 
 
-% Q=[1 0 0 0 0 0;
-%     0 1 0 0 0 0;
-%     0 0 0.001 0 0 0;
-%     0 0 0 1 0 0;
-%     0 0 0 0 1 0;
-%     0 0 0 0 0 0.001];
-% 
-% 
-R = [2^2    0;
-     0      0.002^2];
+Q=[1 0 0 0 0 0;
+    0 1 0 0 0 0;
+    0 0 0.001 0 0 0;
+    0 0 0 1 0 0;
+    0 0 0 0 1 0;
+    0 0 0 0 0 0.001];
 
-r=2; %std of measurement
-Q=eye(6);
+
+R = [3^2    0;
+     0      0.002^2];
     
 R1 = [ 2^2    0;
        0    2^2];
@@ -64,15 +61,15 @@ s=[70;70;10;20;10;0];
 x0=s+sqrtm(Q)*randn(n,1);
 
 
-P0 = eye(6);
-% P0 =[   1 0 0 0 0 0;
-%         0 1 0 0 0 0;
-%         0 0 0.01 0 0 0;
-%         0 0 0 0.01 0 0;
-%         0 0 0 0 0.0001 0;
-%         0 0 0 0 0 0.0001];
+P0
+P0 =[   1 0 0 0 0 0;
+        0 1 0 0 0 0;
+        0 0 0.01 0 0 0;
+        0 0 0 0.01 0 0;
+        0 0 0 0 0.0001 0;
+        0 0 0 0 0 0.0001];
 
-N=50;
+N=100;
 
 Xkf = zeros(n,N);
 Xukf = zeros(n,N);
@@ -131,26 +128,26 @@ end
 %     RMS4_1(k)   =   RMS_A - atan(Z1(1,k)/Z1(2,k));
 % end
 
-% figure
-% t=1:N;
-% hold on;
-% box on;
-% plot(X(1,t),X(2,t),'-k.')  
-% plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'-b.')
-% % plot(Z1(1,t),Z1(2,t),'-r.')
-% % axis([0 15 0 200]);
-% xlabel('x/m');
-% ylabel('y/m');
-% title('Real And Measure Position');
-% legend('Real Position','Measure 1','Measure 2');
+figure
+t=1:N;
+hold on;
+box on;
+plot(X(1,t),X(2,t),'-k.')  
+plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'-b.')
+% plot(Z1(1,t),Z1(2,t),'-r.')
+% axis([0 15 0 200]);
+xlabel('x/m');
+ylabel('y/m');
+title('Real And Measure Position');
+legend('Real Position','Measure 1','Measure 2');
 
 
 figure
 t=1:N;
 hold on;box on;
-plot(X(1,t),X(2,t),'-b.')        
+plot(X(1,t),X(2,t),'k-')        
 plot(Xukf(1,t),Xukf(2,t),'-r.');
-plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'*')
+plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'-b.')
 % plot(Xckf(1,t),Xckf(2,t),'-b.');
 % plot(Xkf(1,t),Xkf(2,t),'-g.');
 xlabel('x/m');

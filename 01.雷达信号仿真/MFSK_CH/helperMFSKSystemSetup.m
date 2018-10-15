@@ -36,7 +36,7 @@ car_speed = 20*1000/3600;
 car_rcs = db2pow(min(10*log10(car_dist)+5,20));
 
 truck_dist = 55;
-truck_speed = 40*1000/3600;
+truck_speed = 80*1000/3600;
 truck_rcs = db2pow(min(10*log10(truck_dist)+5,20));
 
 bike_dist = 65;

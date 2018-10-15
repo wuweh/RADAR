@@ -4,7 +4,7 @@ clear all;
 clc;
 %———————————————————————————————————————
 T= 0.05;    %采样周期
-SAMP=700;   %采样点数
+SAMP=1000;   %采样点数
 Pi=3.1415926536;
 alpha=0.7;  %急动频率
 MK_num=50;
@@ -165,8 +165,8 @@ for i=1:MK_num
         XJk(:,1)=XJk_Initial;
         
     for t=1:1:SAMP-1            
-        [XJk(:,t+1),PJk(:,:,t+1)] = kf(FJT,XJk(:,t),PJk(:,:,t),HJ,Z(:,t),QJ,R);     %基于jerk模型            
-%        [XJk(:,t),PJ0] = kf(FJT_2,XkJ0,PJ0,HJ,Z(:,t),QJ_2,R);     %基于匀加速模型 
+%         [XJk(:,t+1),PJk(:,:,t+1)] = kf(FJT,XJk(:,t),PJk(:,:,t),HJ,Z(:,t),QJ,R);     %基于jerk模型            
+       [XJk(:,t),PJ0] = kf(FJT_2,XkJ0,PJ0,HJ,Z(:,t),QJ_2,R);     %基于匀加速模型 
     end
      XJK_all(:,:,i)=XJk;
 end

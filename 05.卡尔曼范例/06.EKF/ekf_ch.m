@@ -23,16 +23,16 @@ for k=2:len
     vy = vy + (ky*vy^2-g+day*randn(1))*Ts;
     X(k,:) = [x, vx, y, vy];
 end
-figure(1), hold off, plot(X(:,1),X(:,3),'-b.'), grid on
+
 %%  构造量测量
 mrad = 0.001;
-dr = 10; dafa = 10*mrad; % 量测噪声
+dr = 5; dafa = 10*mrad; % 量测噪声
 for k=1:len
     r = sqrt(X(k,1)^2+X(k,3)^2) + dr*randn(1,1);
     a = atan(X(k,1)/X(k,3)) + dafa*randn(1,1);
     Z(k,:) = [r, a];
 end
-figure(1), hold on, plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*');grid on
+
 
 %% ekf 滤波
 Qk = diag([0; dax/10; 0; day/10])^2;
@@ -76,6 +76,8 @@ for k=1:len
 end
 %% 
 figure(1);
+figure(1),plot(X(:,1),X(:,3),'-b.'); hold on; grid on; hold on; grid on;
+figure(1),plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*'); hold on; grid on;
 plot(X_est(:,1),X_est(:,3), '-r.'); hold on; grid on; 
 xlabel('X'); 
 ylabel('Y'); 
