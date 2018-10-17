@@ -29,8 +29,8 @@ kesi = [kesi1,kesi2]*(sqrt(m/2));
 R = [2^2    0;
      0      0.002^2];
 
-r=2; %std of measurement
-Q=eye(6);
+
+Q=0.2*eye(6);
     
 R1 = [ 2^2    0;
        0    2^2];
@@ -107,7 +107,7 @@ for k=1:N
     
 %   [Xukf(:,k),P0] = srukf(f,ux,P0,h,Z(:,k),Q,R);      
     [Xukf(:,k),P0] = ukf(f,ux,P0,h,Z(:,k),Q,R);       
-%     [Xckf(:,k),P1] = ckf(ux1,P1,Z(:,k));           
+    [Xckf(:,k),P1] = ckf(ux1,P1,Z(:,k));           
 %     [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q,R1);    
   
     ux  = Xukf(:,k);
@@ -151,7 +151,7 @@ hold on;box on;
 plot(X(1,t),X(2,t),'-b.')        
 plot(Xukf(1,t),Xukf(2,t),'-r.');
 plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'*')
-% plot(Xckf(1,t),Xckf(2,t),'-b.');
+plot(Xckf(1,t),Xckf(2,t),'-b.');
 % plot(Xkf(1,t),Xkf(2,t),'-g.');
 xlabel('x/m');
 ylabel('y/m');
