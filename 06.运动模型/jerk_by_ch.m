@@ -164,9 +164,11 @@ for i=1:MK_num
         PJk(:,:,1)=PJ_Initial;
         XJk(:,1)=XJk_Initial;
         
-    for t=1:1:SAMP-1            
-%         [XJk(:,t+1),PJk(:,:,t+1)] = kf(FJT,XJk(:,t),PJk(:,:,t),HJ,Z(:,t),QJ,R);     %基于jerk模型            
-       [XJk(:,t),PJ0] = kf(FJT_2,XkJ0,PJ0,HJ,Z(:,t),QJ_2,R);     %基于匀加速模型 
+    for t=1:1:SAMP           
+        [XJk(:,t),PJk(:,:,t)] = kf(FJT,XJk(:,t),PJk(:,:,t),HJ,Z(:,t),QJ,R);     %基于jerk模型            
+%        [XJk(:,t),PJk(:,:,t)] = kf(F,a,PJk(:,:,t),HJ,Z(:,t),QJ_2,R);     %基于匀加速模型 
+        a = XJk(:,t);
+        b = PJk(:,:,t);
     end
      XJK_all(:,:,i)=XJk;
 end

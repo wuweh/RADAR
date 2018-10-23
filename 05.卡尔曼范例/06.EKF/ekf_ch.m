@@ -1,8 +1,8 @@
 % clc;clear all;close all;
 % 
-% syms x vx y vy kx ky g T
-% jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy])
-% jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
+syms x vx y vy kx ky g T
+jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy])
+jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
 
 close all;
 clear all;
