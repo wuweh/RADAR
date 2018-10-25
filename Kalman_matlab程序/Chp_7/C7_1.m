@@ -2,7 +2,7 @@ clc
 clear
 %%%测量参数：周期和测量方差的设置
 T=1;
-R=40^2;;
+R=40^2;
 %%%圆形机动的测量值
 Tt=31;Tz=57;[t,y]=funtrackinglinecircle(T,Tt,Tz,R);
 %%%%%%%%%%选择模型
