@@ -22,12 +22,9 @@ F1 = [ 1,  T,  0,  0;
       0,  1,  0,  0;
       0   0,  1,  T;
       0 , 0 , 0 , 1;];
-
-H = [1,0,0,0,0;
-     0,0,1,0,0 ];
-
-H1 = [1,0,0,0;
-      0,0,1,0 ];
+  
+H = [1,0,0,0,0; 0,0,1,0,0 ];
+H1 = [1,0,0,0; 0,0,1,0 ];
 
 P2 =[ 1 0 0 0 0 ;
       0 1 0 0 0 ;
@@ -49,16 +46,14 @@ Q = [dx^2,0,0,0,0;
      0,dvx^2,0,0,0;
      0,0,dy^2,0,0;
      0,0,0,dvy^2,0;
-     0,0,0,0,0.01; ];
+     0,0,0,0,0.001; ];
 
- dx = 2;
- dy = 2;
-R = [dx^2   0;
-        0    dy^2];
+dx = 2;
+dy = 2;
+R = [dx^2   0;  0    dy^2];
 
 R1 = R;
   
-
 %初始化
 x(:,1) = [20,10,20,10,w]';
 Z1(:,1) = H*x(:,1)+sqrtm(R)*randn(2,1);
@@ -81,20 +76,18 @@ end
 figure;
 subplot(221)
 hold on;
-plot(x(1,:),x(3,:),'-b.');
-hold on;
-plot(Z1(1,:),Z1(2,:),'-.');
-plot(Xkf(1,:),Xkf(3,:),'-r.');
-plot(Xkf1(1,:),Xkf1(3,:),'-g.');
-% set(gca,'color',[0.3, 0.3, 0.3]);
-legend('真实值','测量值','CT预测值','CV预测值')
+plot(x(1,:),x(3,:),'-b.');hold on;grid on;
+plot(Z1(1,:),Z1(2,:),'-.');hold on;grid on;
+plot(Xkf(1,:),Xkf(3,:),'-r.');hold on;grid on;
+plot(Xkf1(1,:),Xkf1(3,:),'-g.');hold on;grid on;
+legend('真实值','测量值','CT预测值','CV预测值');
+hold on;grid on;
   
 D=sqrt((x(1,:)-Xkf(1,:)).^2+(x(3,:)-Xkf(3,:)).^2);%均方根误差
 D1=sqrt((x(1,:)-Xkf1(1,:)).^2+(x(3,:)-Xkf1(3,:)).^2);%均方根误差
 subplot(222)
-plot(D(1:SPM),'-ro','MarkerSize',4);
-hold on
-plot(D1(1:SPM),'-bo','MarkerSize',4);
+plot(D(1:SPM),'-ro','MarkerSize',4);hold on;grid on;
+plot(D1(1:SPM),'-bo','MarkerSize',4);hold on;grid on;
 legend('CT模型误差','CV模型误差')
 
 x_p = 1:1:SPM;
@@ -104,13 +97,11 @@ delta_x2=x(1,:)-Xkf1(1,:);
 delta_y2=x(3,:)-Xkf1(3,:);
 
 subplot(223)
-plot(x_p,delta_x1,'-ro','MarkerSize',4);
-hold on
-plot(x_p,delta_x2,'-bo','MarkerSize',4);
+plot(x_p,delta_x1,'-ro','MarkerSize',4);hold on;grid on;
+plot(x_p,delta_x2,'-bo','MarkerSize',4);hold on;grid on;
 
 subplot(224)
-plot(x_p,delta_y1,'-ro','MarkerSize',4);
-hold on
-plot(x_p,delta_y2,'-bo','MarkerSize',4);
+plot(x_p,delta_y1,'-ro','MarkerSize',4);hold on;grid on;
+plot(x_p,delta_y2,'-bo','MarkerSize',4);hold on;grid on;
  
  
