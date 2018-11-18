@@ -5,7 +5,6 @@ summ=0;
 N=10; %总模拟次数
 
 for n=1:N
-
     %%读入Hotarget数据文件
     % load Hotarget 
     % T=10;
@@ -13,7 +12,7 @@ for n=1:N
 
     load mytarget 
     T=0.1;
-    R=1;
+    R=4;
 
     y=xys+sqrt(R)*randn(size(xys));
     qqa=[];

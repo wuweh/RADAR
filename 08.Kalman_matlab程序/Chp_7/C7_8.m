@@ -1,5 +1,6 @@
 clc
-clear
+clear all
+close all
 %%%%%%%%%%%%%%%%%%产生待估计序列 p(k+1)=a*p(k)+w(t)
 a=0.8;   
 q=2;          %%w(t)的方差
