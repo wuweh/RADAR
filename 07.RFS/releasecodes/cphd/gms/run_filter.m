@@ -28,7 +28,7 @@ filter.L_max= 100;                  %limit on number of Gaussians
 filter.elim_threshold= 1e-5;        %pruning threshold
 filter.merge_threshold= 4;          %merging threshold
 
-filter.N_max= 20;                   %maximum cardinality number (for cardinality distribution)
+filter.N_max= 30;                   %maximum cardinality number (for cardinality distribution)
 
 filter.P_G= 0.999;                               %gate size in percentage
 filter.gamma= chi2inv(filter.P_G,model.z_dim);   %inv chi^2 dn gamma value

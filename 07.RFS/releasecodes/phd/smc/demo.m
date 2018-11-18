@@ -13,7 +13,7 @@
 % number={4},
 % pages={1224-1245}} 
 %---
-
+clc;clear all;close all;
 model= gen_model;
 truth= gen_truth(model);
 meas=  gen_meas(model,truth);

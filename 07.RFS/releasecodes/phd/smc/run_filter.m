@@ -84,8 +84,8 @@ for k=1:meas.K
     if sum(w_update) > 0.5
         [x_c,I_c]= our_kmeans(x_update,w_update,1);
         est.N(k)= 0;
-        for j=1:size(x_c,2);
-            if sum(w_update(I_c{j})) > .5,
+        for j=1:size(x_c,2)
+            if sum(w_update(I_c{j})) > .5
                 est.X{k}= [ est.X{k} x_c(:,j) ];
                 est.N(k)= est.N(k)+1;
                 est.L{k}= [];

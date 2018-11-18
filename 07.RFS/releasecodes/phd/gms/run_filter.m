@@ -50,10 +50,11 @@ for k=1:meas.K
     [m_predict,P_predict] = kalman_predict_multiple(model,m_update,P_update);                       %surviving components
     w_predict= model.P_S*w_update;                                                                  %surviving weights
 
-    m_predict= cat(2,model.m_birth,m_predict); P_predict=cat(3,model.P_birth,P_predict);            %append birth components
+    m_predict= cat(2,model.m_birth,m_predict); 
+    P_predict=cat(3,model.P_birth,P_predict);            %append birth components
     w_predict= cat(1,model.w_birth,w_predict);                                                      %append birth weights
                                                  
-    L_predict= model.L_ibrth+L_update;                                                              %number of predicted components
+    L_predict= model.L_birth+L_update;                                                              %number of predicted components
     
     %---gating
     if filter.gate_flag
@@ -92,7 +93,7 @@ for k=1:meas.K
     L_update= L_cap;
     
     %--- state extraction
-    idx= find(w_update > 0.5 );
+    idx= find(w_update > 0.5 );  %筛选超过门限值的目标序号
     for j=1:length(idx)
         repeat_num_targets= round(w_update(idx(j)));
         est.X{k}= [ est.X{k} repmat(m_update(:,idx(j)),[1,repeat_num_targets]) ];

@@ -57,7 +57,7 @@ model.P_D= .98;   %probability of detection in measurements
 model.Q_D= 1-model.P_D; %probability of missed detection in measurements
 
 % clutter parameters
-model.lambda_c= 20;                             %poisson average rate of uniform clutter (per scan)
+model.lambda_c= 5;                             %poisson average rate of uniform clutter (per scan)
 model.range_c= [ -pi/2 pi/2; 0 2000 ];          %uniform clutter on r/theta
 model.pdf_c= 1/prod(model.range_c(:,2)-model.range_c(:,1)); %uniform clutter density
 

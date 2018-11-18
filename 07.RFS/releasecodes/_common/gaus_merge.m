@@ -12,7 +12,8 @@ if all(w==0)
 end
 
 while ~isempty(I)
-    [notused,j]= max(w); j= j(1);
+    [notused,j]= max(w); 
+    j= j(1);
     Ij= []; iPt= inv(P(:,:,j));
     w_new(el,1)= 0; 
     x_new(:,el)= zeros(x_dim,1); 
