@@ -1,17 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%   航迹管理函数说明：
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   input:  1）N_target：             目标个数
 %               2）Target_Info：          目标信息
 %   output: 1）Target_Number：        可靠航迹个数
 %           2）Target_Info_Output：   可靠航迹信息
 %           3）Target_Number_1：      临时航迹个数
 %           4）Target_Info_Output_1： 临时航迹信息
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-%   Change_History:
-%       1）20180609：利用卡方分布设置门限，对落入门限内的量测点采用最近领域法找关联点，滤波采用4维参数标准卡尔曼滤波
-%       2）20180610：修改可靠航迹点迹相关方法，直接用XY轴门限判定点迹是否与航迹相关
-%       3) 20180710：修正可靠航迹再次关联到点迹时，没有清空未关联次数的bug
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 function [Target_Number, Target_Info_Output,Target_Number_1, Target_Info_Output_1] = track_func(N_target,Target_Info)
     global Track_Table confirm_track_ID temp_track_ID confirm_target_number temp_target_number Conv_P ffun hfun Q R;    
@@ -26,7 +21,7 @@ function [Target_Number, Target_Info_Output,Target_Number_1, Target_Info_Output_
             temp_x1 = ffun*temp_X;  %对上一次的后验值进行一步预测
             temp_P1 = ffun*temp_P*ffun'+Q;
             temp_z = hfun*temp_x1;
-            temp_S = hfun*temp_P1*hfun'+R;
+            temp_S = hfun*temp_P1*hfun'+R;  %计算新息协方差
             temp_K = temp_P1*hfun'*inv(temp_S); %增益 
             
             %计算卡方值
@@ -56,10 +51,13 @@ function [Target_Number, Target_Info_Output,Target_Number_1, Target_Info_Output_
 
                         %开始卡尔曼滤波
                         y = Track_Table(confirm_track_ID(i)).M;       
-                        x = temp_x1+temp_K*(y-temp_z);
-                        p = (eye(4)-temp_K*hfun)*temp_P1;               
+%                         x = temp_x1+temp_K*(y-temp_z);
+%                         p = (eye(4)-temp_K*hfun)*temp_P1;   
+%                         
+                        [x, p] = PDA_Function(temp_x1, temp_P1, temp_S, temp_z,temp_K, y, 1); % 调用PDA算法
                         Track_Table(confirm_track_ID(i)).X = x;
                         Track_Table(confirm_track_ID(i)).P = p;
+
             else 
                          if  Track_Table(confirm_track_ID(i)).no_related == 4 %连续四次未关联上目标
                                     %清空本航迹所有信息

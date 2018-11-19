@@ -118,9 +118,10 @@ while 1
             %航迹管理函数
             [new_target_number,new_target_info, new_target_number_1,new_target_info_1,] = track_func(target_num1,target_info1);
             % 输出（可靠航迹）卡尔曼滤波后目标信息
-            new_target_info
+%             new_target_info
             plot(new_target_info(1:new_target_number,1),new_target_info(1:new_target_number,3),'r.','MarkerSize',20);hold on   
-            plot(new_target_info_1(1:new_target_number_1,1),new_target_info_1(1:new_target_number_1,3),'g.','MarkerSize',10);hold on   
+            plot(new_target_info_1(1:new_target_number_1,1),new_target_info_1(1:new_target_number_1,3),'g.','MarkerSize',20);hold on   
+            
             axis([-20 20 0 200]);  grid on     
             title(time);
             pause(0.1);
