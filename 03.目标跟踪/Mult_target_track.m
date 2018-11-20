@@ -48,7 +48,7 @@ R11=1; R22=1; R12=0; R21=0;
 P=[R11 R11/T R12 R12/T; R11/T 2*R11/T^2 R12/T 2*R12/T^2; 
    R21 R21/T R22 R22/T; R21/T 2*R21/T^2 R22/T 2*R22/T^2];   
 
-global confirm_track_ID temp_track_ID confirm_target_number temp_target_number Conv_P;
+global confirm_track_ID temp_track_ID confirm_target_number temp_target_number Conv_P middle_track_ID middle_target_number;
 Target_Table1 = struct( 'status',{},...
                         'counter',{},...
                         'no_related',{},...
@@ -57,6 +57,8 @@ Target_Table1 = struct( 'status',{},...
                         'Z',zeros(2,1),...
                         'P',zeros(4,4),...
                         'FROM',{},...
+                        'Middle_counter',0,...
+                        'kekao_counter',0,...
                         'X_AVE',{} );
 Conv_P = P;
 for i=1:256
@@ -76,11 +78,15 @@ Track_Table = Target_Table1;
                        
 confirm_track_ID = zeros(64,1);
 temp_track_ID = zeros(64,1);
+middle_track_ID = zeros(64,1);
 confirm_target_number = 0;
 temp_target_number = 0;
+middle_target_number = 0;
 
 fid = fopen('Target_info.txt','r');
 data = textscan(fid,'%f %f %f');
+
+
 
 line_index = 1;
 target_info = zeros(64,4);
@@ -98,7 +104,7 @@ while 1
 
             target_info(j,1) = RR*sin(abs(A)*3.14/180);  %X
             target_info(j,3) = RR*cos(abs(A)*3.14/180);  %Y
-            target_info(j,2) = V*sin(A*3.14/180);        %VX
+            target_info(j,2) = 0.01;%V*sin(A*3.14/180);        %VX
             target_info(j,4) = V*cos(A*3.14/180);        %VY
            
             if A < 0
@@ -108,59 +114,27 @@ while 1
     end
 
     % 点迹预处理
-    step = sprintf('*********************** step %d ***********************',time)
-    
+%     fprintf('*********************** step %d ***********************',time)
     % 输出原始目标信息
-    ori_target_info = target_info(1:target_num,:)
-    
+    ori_target_info = target_info(1:target_num,:);
     [target_info1,target_num1] = Pre_Deal(target_info,target_num);
    
     % 输出预处理后原始目标信息
     before_info = target_info1(1:target_num1,:);
-    
-    for i=1:target_num1
-            x = target_info1(i,1);
-            y = target_info1(i,3);          
-            plot(x,y,'b*');
-            hold on   
-    end
-    
-    axis([-40 40 0 70]); 
-    
-%     if time == 381
-%         pause(1);
-%     end
-    
+    x = target_info1(1:target_num1,1);y = target_info1(1:target_num1,3); plot(x,y,'k*');hold on   
     %航迹管理函数
     [new_target_number,new_target_info, new_target_number_1,new_target_info_1,] = track_func(target_num1,target_info1);
-  
     % 输出（可靠航迹）卡尔曼滤波后目标信息
     kalman_info = new_target_info(1:new_target_number,:);
-    
-    for i=1:new_target_number
-        x = new_target_info(i,1);
-        y = new_target_info(i,3);
-        plot(x,y,'r*');
-        hold on 
-    end
-    
+    x = new_target_info(1:new_target_number,1);    y = new_target_info(1:new_target_number,3); plot(x,y,'r.','MarkerSize',15);    hold on 
     % 输出临时航迹目标信息
     linear_info = new_target_info_1(1:new_target_number_1,:);
-    
-    for i=1:new_target_number_1
-        x = new_target_info_1(i,1);
-        y = new_target_info_1(i,3);
-        plot(x,y,'g*');
-        hold on 
-    end
-    
-    axis([-40 40 0 70]);  
-
+    x = new_target_info_1(1:new_target_number_1,1);    y = new_target_info_1(1:new_target_number_1,3); plot(x,y,'g.','MarkerSize',15);    hold on
+    axis([-40 40 0 70]); grid on; 
     line_index = line_index + target_num +1;
-    pause(0.01);
+    pause(0.05);
+    
 end
-
-
 
 
 
@@ -173,7 +147,7 @@ function [out,num_out] = Pre_Deal(info,num)
         delta_x = abs(info(i,1) - info(i+1,1));
         delta_y = abs(info(i,3) - info(i+1,3));
 
-        if delta_x<2 && delta_y<2
+        if delta_x<1 && delta_y<1
             info(i+1,1) = (info(i,1) + info(i+1,1))/2;
             info(i+1,3) = (info(i,3) + info(i+1,3))/2;
             info(i,:) = zeros(1,4);
