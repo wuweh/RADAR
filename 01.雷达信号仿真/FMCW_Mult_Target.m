@@ -56,13 +56,10 @@ fs = max(2*fb_max,bw);
 %  Maximum beat frequency (MHz) 27.30
 %  Sample rate (MHz)            150
 
-%%
-% With all the information above, one can set up the FMCW waveform used
-% in the radar system.
-
 %写入波形参数：扫频时间；扫频带宽；采样率
 hwav = phased.FMCWWaveform('SweepTime',tm,'SweepBandwidth',bw, 'SampleRate',fs);
 
+plot(hwav);
 %%
 % This is a up-sweep linear FMCW signal, often referred to as sawtooth
 % shape. One can examine the time-frequency plot of the generated signal.
@@ -70,20 +67,20 @@ hwav = phased.FMCWWaveform('SweepTime',tm,'SweepBandwidth',bw, 'SampleRate',fs);
 % 形成波形
 s = step(hwav);
 
-% %实部即信号的幅度！！！！
-% subplot(211); 
-% plot(0:1/fs:tm-1/fs,real(s));
-% xlabel('Time (s)'); ylabel('Amplitude (v)');
-% title('FMCW signal'); axis tight;
+%实部即信号的幅度！！！！
+subplot(211); 
+plot(0:1/fs:tm-1/fs,real(s));
+xlabel('Time (s)'); ylabel('Amplitude (v)');
+title('FMCW signal'); axis tight;
 
-% %spectrogram: 用短时傅里叶变换
-% %32阶hanmming windows；
-% %16 sample overlap
-% % 32点FFT
-% %采样频率为fs
-% %发射波形频谱图
-% subplot(212); spectrogram(s,32,16,256,fs,'yaxis');
-% title('FMCW signal spectrogram');
+%spectrogram: 用短时傅里叶变换
+%32阶hanmming windows；
+%16 sample overlap
+% 32点FFT
+%采样频率为fs
+%发射波形频谱图
+subplot(212); spectrogram(s,32,16,256,fs,'yaxis');
+title('FMCW signal spectrogram');
 
 %% Target Model_1
 % The target of an ACC radar is usually a car in front of it. This example
@@ -94,32 +91,18 @@ s = step(hwav);
 %雷达散射截面(RCS)可由相对距离估计；
 car_dist_1 = 50;                                %50m
 car_speed_1 = 60*1000/3600;         %120km/h
-
-%目标车辆的RCS值
 car_rcs_1 = db2pow(min(10*log10(car_dist_1)+5,20));
-
-%c指的是光速，fc指的是载波频率
 hcar_1 = phased.RadarTarget('MeanRCS',car_rcs_1,'PropagationSpeed',c,'OperatingFrequency',fc);
-
-%定义目标车辆的初始位置[x,y,z]和初始速度[vx,vy,vz]
 hcarplatform_1 = phased.Platform('InitialPosition',[car_dist_1;0;0.5],'Velocity',[car_speed_1;0;0]);
 
 %% Target Model_2
 car_dist_2 = 80;                                    % 20m
 car_speed_2 = 180*1000/3600;             %50km/h
-
-%目标车辆的RCS值
 car_rcs_2 = db2pow(min(10*log10(car_dist_2)+5,20));
-
-%c指的是光速，fc指的是载波频率
 hcar_2 = phased.RadarTarget('MeanRCS',car_rcs_2,'PropagationSpeed',c,'OperatingFrequency',fc);
-
-%定义目标车辆的初始位置[x,y,z]和初始速度[vx,vy,vz]
 hcarplatform_2 = phased.Platform('InitialPosition',[car_dist_2;0;0.5],'Velocity',[car_speed_2;0;0]);
 
-%%
-%不怎么明白这个参数的作用？？？？
-% The propagation model is assumed to be free space.
+
 hchannel = phased.FreeSpace('PropagationSpeed',c,'OperatingFrequency',fc,'SampleRate',fs,'TwoWayPropagation',true);
 
 %% Radar System Setup
@@ -191,7 +174,6 @@ hradarplatform = phased.Platform('InitialPosition',[0;0;0.5],'Velocity',[radar_s
 %
 % During the simulation, a spectrum analyzer is used to show the spectrum
 % of each received sweep as well as its dechirped counterpart.
-%这个也不怎么明白？？？？
 hspec = dsp.SpectrumAnalyzer('SampleRate',fs,'PlotAsTwoSidedSpectrum',true,'Title',...
 'Spectrum for received and dechirped signal',...
     'ShowLegend',true);
@@ -248,10 +230,10 @@ end
 %     'RangeFFTLengthSource','Property','RangeFFTLength',2048,...
 %     'DopplerFFTLengthSource','Property','DopplerFFTLength',64);
 % % 
-% clf;
-% plotResponse(hrdresp,xr)                 % Plot range Doppler map
-% axis([-v_max v_max 0 range_max])
-% clim = caxis;
+clf;
+plotResponse(hrdresp,xr)                 % Plot range Doppler map
+axis([-v_max v_max 0 range_max])
+clim = caxis;
 % 
 % %%
 % % From the range Doppler response, one can see that the car in front is a
@@ -272,12 +254,12 @@ end
 % % required sweeping bandwidth, the signal can be decimated to alleviate the
 % % hardware cost. The following code snippet shows the decimation process.
 % 
-% Dn = fix(fs/(2*fb_max));
-% for m = size(xr,2):-1:1
-%     xr_d(:,m) = decimate(xr(:,m),Dn,'FIR');
-% end
-% fs_d = fs/Dn;
-% % 
+Dn = fix(fs/(2*fb_max));
+for m = size(xr,2):-1:1
+    xr_d(:,m) = decimate(xr(:,m),Dn,'FIR');
+end
+fs_d = fs/Dn;
+% 
 % %%
 % % To estimate the range, firstly, the beat frequency is estimated using the
 % % coherently integrated sweeps and then converted to the range.

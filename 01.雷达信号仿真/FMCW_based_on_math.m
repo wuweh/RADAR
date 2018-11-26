@@ -52,30 +52,31 @@ for m = 1:1:Nsweep
     2*target_speed1/c*sweep_slope*t.^2));% echo signal_2
     
     xr = xr1(:,m)+xr2(:,m);
-    fft1(:,m) =fft(xr,FFT_R_N); % distance fft
+    fft1(:,m) =fft(abs(xr),FFT_R_N); % distance fft
 end
 
-ttt = 0:1/200e6:tm;
-xr3(:,m) = exp(1i*pi*sweep_slope*ttt.^2);
-% xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2+i*2*pi*f0*ttt);
-figure;
-subplot(121)
-plot(real(xr3(:,m)))
-subplot(122)
-plot(abs(fft(xr3(:,m),512)))
-[Pxx,F]=pyulear(xr3(:,m),12,length(xr3(:,m)),200e6);
-plot(F,10*log10(Pxx))
-xlabel('Frequency (Hz)');ylabel('Power Spectrum (dB)');
-set(gca,'ytick',[],'yticklabel',[]);
-axis tight;
+% ttt = 0:1/200e6:tm;
+% xr3(:,m) = exp(1i*pi*sweep_slope*ttt.^2);
+% % xr3(:,m) = exp(i*pi*sweep_slope*ttt.^2+i*2*pi*f0*ttt);
+% figure;
+% subplot(121)
+% plot(real(xr3(:,m)))
+% subplot(122)
+% plot(abs(fft(xr3(:,m),512)))
+% [Pxx,F]=pyulear(xr3(:,m),12,length(xr3(:,m)),200e6);
+% plot(F,10*log10(Pxx))
+% xlabel('Frequency (Hz)');ylabel('Power Spectrum (dB)');
+% set(gca,'ytick',[],'yticklabel',[]);
+% axis tight;
+% 
 
 figure;
 subplot(221)
-plot(real(xr1(1:256)))
+plot(real(xr1(1:256,m)))
 title('÷–∆µ ±”Ú–≈∫≈')
 
 for n = 1:1:FFT_R_N
-    fft2(n,:) = abs(fft((fft1(n,:)),FFT_V_N));% velocity fft
+    fft2(n,:) = abs(fft(abs((fft1(n,:))),FFT_V_N));% velocity fft
 end 
 
 %æ‡¿ÎŒ¨∆µ∆◊Õº
