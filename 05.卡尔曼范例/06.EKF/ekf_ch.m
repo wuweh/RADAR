@@ -1,7 +1,7 @@
 
 syms x vx y vy kx ky g T
-jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy]);
-jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy]);
+jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy])
+jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
 
 close all;
 clear all;
@@ -53,20 +53,26 @@ for k=1:len
     r = sqrt(x1*x1+y1*y1);
     alpha = atan(x1/y1);
     y_yuce = [r,alpha]';
+    
     %  状态矩阵
     vx = x_forecast(2);  vy = x_forecast(4);
     F = zeros(4,4);
-    F(1,1) = 1;  F(1,2) = Ts;
+    F(1,1) = 1;  
+    F(1,2) = Ts;
     F(2,2) = 1-2*kx*vx*Ts;
-    F(3,3) = 1;  F(3,4) = Ts;
+    F(3,3) = 1;  
+    F(3,4) = Ts;
     F(4,4) = 1+2*ky*vy*Ts;
     Pkk_1 = F*Pk*F'+Qk;
+    
     % 观测矩阵
     x = x_forecast(1); y = x_forecast(3);
     H = zeros(2,4);
     r = sqrt(x^2+y^2);  xy2 = 1+(x/y)^2;
-    H(1,1) = x/r;  H(1,3) = y/r;
-    H(2,1) = (1/y)/xy2;  H(2,3) = (-x/y^2)/xy2;
+    H(1,1) = x/r;  
+    H(1,3) = y/r;
+    H(2,1) = (1/y)/xy2;  
+    H(2,3) = (-x/y^2)/xy2;
     
     Kk = Pkk_1*H'*(H*Pkk_1*H'+Rk)^-1;       %计算增益
     x_hat = x_forecast+Kk*(Z(k,:)'-y_yuce);      %校正

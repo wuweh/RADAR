@@ -11,18 +11,14 @@ function [Xo,Xoset,Pout]=upf(Xiset,Z,t,Pin,N,R,Qukf,Rukf,g1,g2)
  
 resamplingScheme=1;
 
- 
 Xukf=ones(1,N);     
 Xset_pre=ones(1,N);  
 Zpre=ones(1,N); 
 for i=1:N
- 
     [Xukf(i),Pout(i)]=ukf(Xiset(i),Z,Pin(i),Qukf,Rukf,t);
-  
     Xset_pre(i) = Xukf(i) + sqrtm(Pout(i))*randn;
 end
 
- 
 for i=1:N
  
     Zpre(i) = feval('hfun',Xset_pre(i),t);
