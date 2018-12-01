@@ -1,18 +1,17 @@
-% clc;clear all;close all;
-% 
+
 syms x vx y vy kx ky g T
-jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy])
-jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
+jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy]);
+jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy]);
 
 close all;
 clear all;
 %%  真实轨迹模拟
 kx = .01;   ky = .05;       % 阻尼系数
 g = 9.8;                    % 重力
-t = 15;                     % 仿真时间
+t = 30;                     % 仿真时间
 Ts = 0.1;                   % 采样周期 
 len = fix(t/Ts);            % 仿真步数
-dax = 3; day = 3;       % 系统噪声
+dax = 2; day = 2;       % 系统噪声
 X = zeros(len,4); 
 X(1,:) = [0, 50, 500, 0]; % 状态模拟的初值
 for k=2:len
@@ -26,7 +25,7 @@ end
 
 %%  构造量测量
 mrad = 0.001;
-dr = 5; dafa = 10*mrad; % 量测噪声
+dr = 4; dafa = 10*mrad; % 量测噪声
 for k=1:len
     r = sqrt(X(k,1)^2+X(k,3)^2) + dr*randn(1,1);
     a = atan(X(k,1)/X(k,3)) + dafa*randn(1,1);
@@ -76,9 +75,10 @@ for k=1:len
 end
 %% 
 figure(1);
-figure(1),plot(X(:,1),X(:,3),'-b.'); hold on; grid on; hold on; grid on;
-figure(1),plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*'); hold on; grid on;
-plot(X_est(:,1),X_est(:,3), '-r.'); hold on; grid on; 
+plot(X(:,1),X(:,3),'-b.'); hold on; grid on;axis([0 400 0 550])
+pause(1);
+plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*'); hold on;
+plot(X_est(:,1),X_est(:,3), '-r.'); hold on;
 xlabel('X'); 
 ylabel('Y'); 
 title('EKF simulation');
