@@ -30,7 +30,7 @@ for k=1:len
     Z(k,:) = [r, a];
 end
 
-V = [4,0.01,4,0.01];
+V = [1,0.01,1,0.01];
 % 用一个高斯分布随机的产生初始的粒子  
 for i = 1:N    
     x_P(i,:) = X(1,:) + sqrt(V) * randn;    
@@ -79,30 +79,26 @@ for k = 1 : len
 %     for i = 1 : N    
 %         x_P(i,:) = x_P_update(find(rand <= cumsum(w),1),:);   % 粒子权重大的将多得到后代    
 %     end  
-    PCenter(k,:) = mean(x_P); 
 
+    PCenter(k,:) = mean(x_P); 
     %计算误差
     err(k) = sqrt((PCenter(k,1)-X(k,1))^2 + (PCenter(k,3)-X(k,3))^2);     %粒子几何中心与系统真实状态的误差
 
 %     figure(1);
 %     set(gca,'FontSize',12);
-%     %clf; 用来清除图形的命令。一般在画图之前用
-%     clf;
-%     hold on
-%     plot(X(k,1), X(k,3), 'r.', 'markersize',50);  %系统状态位置
-%     plot(x_P(:,1), x_P(:,3), 'k.', 'markersize',5);   %各个粒子位置
-%     plot(PCenter(k,1), PCenter(k,3), 'b.', 'markersize',25); %所有粒子的中心位置
-%     axis([0 300 0 500])
+    plot(X(k,1), X(k,3), 'r*', 'markersize',5);    hold on  %系统状态位置
+    plot(x_P(:,1), x_P(:,3), 'k.', 'markersize',5);     hold on  %各个粒子位置
+    plot(PCenter(k,1), PCenter(k,3), 'b*', 'markersize',3);    hold on ;grid on%所有粒子的中心位置
+    axis([0 300 0 500])
 %     legend('True State', 'Particle', 'The Center of Particles');
-%     hold off
-%     pause(0.01);
+     pause(0.001);
 end
 
 %作图部分
 figure;
 set(gca,'FontSize',12);
 plot(X(:,1), X(:,3), 'b.-');hold on;
-plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*');hold on;
+plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'.');hold on;
 plot(PCenter(:,1), PCenter(:,3), 'r.-');hold on;
 grid on;axis([0 350 0 550])
 legend('True State', 'Measurement', 'Particle Filter');

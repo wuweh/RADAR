@@ -12,7 +12,7 @@ R=1;%测量噪声方差
 v=sqrt(R)*randn(T,1);%测量噪声
 w=sqrt(Q)*randn(T,1);%过程噪声
 numSamples=100;%粒子数
-ResampleStrategy=4;%=1为随机采样，=2为系统采样
+ResampleStrategy=2;%=1为随机采样，=2为系统采样
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 x0=0.1;%初始状态
 %产生真实状态和观测值
@@ -182,21 +182,21 @@ end
 % 多项式重采样子函数
 % 输入参数：weight为原始数据对应的权重大小
 % 输出参数：outIndex是根据weight筛选和复制结果
-function outIndex = multinomialR(weight);
+function outIndex = multinomialR(weight)
 %获取数据长度
-Col=length(weight)
+Col=length(weight);
 N_babies= zeros(1,Col);
 
 %计算粒子权重累计函数cdf 
 cdf= cumsum(weight);
  %产生[0,1]均匀分布的随机数
-u=rand(1,Col)
+u=rand(1,Col);
 
 %求u^(j^-1)次方 
-uu=u.^(1./(Col:-1:1))
+uu=u.^(1./(Col:-1:1));
  %如果A是一个向量，cumprod(A)将返回一个包含A各元素积累连乘的结果的向量
  %元素个数与原向量相同
-ArrayTemp=cumprod(uu)
+ArrayTemp=cumprod(uu);
  %fliplr(X)使矩阵X沿垂直轴左右翻转
 u = fliplr(ArrayTemp);
 j=1;
@@ -206,14 +206,14 @@ for i=1:Col
         j=j+1;
     end
     N_babies(j)=N_babies(j)+1;
-end;
+end
 index=1;
 for i=1:Col
     if (N_babies(i)>0)
         for j=index:index+N_babies(i)-1
             outIndex(j) = i;
-        end;
-    end;
+        end
+    end
     index= index+N_babies(i);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,15 +238,15 @@ if (N_res~=0)
             j=j+1;
         end
         N_babies(1,j)=N_babies(1,j)+1;
-    end;
-end;
+    end
+end
 index=1;
 for i=1:N
     if (N_babies(1,i)>0)
         for j=index:index+N_babies(1,i)-1
             outIndex(j) = i;
-        end;
-    end;
+        end
+    end
     index= index+N_babies(1,i);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,7 +255,7 @@ end
 % 系统重采样子函数
 % 输入参数：weight为原始数据对应的权重大小
 % 输出参数：outIndex是根据weight筛选和复制结果
-function outIndex = systematicR(weight);
+function outIndex = systematicR(weight)
 N=length(weight);
 N_children=zeros(1,N);
 label=zeros(1,N);
@@ -288,7 +288,7 @@ for i=1:N
     if (N_children(1,i)>0)
         for j=index:index+N_children(1,i)-1
             outIndex(j) = i;
-        end;
-    end;
+        end
+    end
     index= index+N_children(1,i);
 end

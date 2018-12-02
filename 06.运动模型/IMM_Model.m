@@ -65,10 +65,10 @@ for a=2:simTime
        x(:,a)=F5*x(:,a-1);        %60--80s右转 
     else
         x(:,a)=F1*x(:,a-1);      %匀速直线运动
-    end; 
+    end
 z(:,a)=H*x(:,a)+measureNoise(:,a);
 z_true(:,a)=H*x(:,a);
-end;
+end
 %===============================
 %     IMM
 %===============================
@@ -89,27 +89,21 @@ S1_IMM=zeros(2,2);
 S2_IMM=zeros(2,2);
 S3_IMM=zeros(2,2);
 
-
 %初始化
 x_pro_IMM(:,1)=x0;
 
 pij=[0.9,0.05,0.05;
-    0.1,0.8,0.1;
-    0.05,0.15,0.8];    %模型转移概率矩阵
+     0.1,0.8,0.1;
+     0.05,0.15,0.8];    %模型转移概率矩阵
 %pij=[0.6,0.2,0.2;0.2,0.6,0.2;0.25,0.15,0.6];    %模型转移概率矩阵
 u_IMM=zeros(3,simTime);
 u_IMM(:,1)=[0.3,0.3,0.4]';  %IMM算法模型概率
-
 x1_IMM=x0;x2_IMM=x0;x3_IMM=x0;  %IMM算法各模型初始状态
-
 P0=diag([1000,500,1000,500]);  %初始状态协方差矩阵
-
 P1_IMM=P0;P2_IMM=P0;P3_IMM=P0;
-
 P_IMM(:,:,1)=P0;
 
 %main loop
-
 for t=1:simTime-1
     
     %第一步Interacting（只针对IMM算法）
@@ -265,27 +259,21 @@ function [X,P,e,S]=Kalman(X_Forward,P_Forward,Z,A,G,Q,H,R)
 %       e--残差
 %       S--残差协方差矩阵
 
-% 预测
-X_Pre=A*X_Forward;
-P_Pre=A*P_Forward*A'+G*Q*G';
+    % 预测
+    X_Pre=A*X_Forward;
+    P_Pre=A*P_Forward*A'+G*Q*G';
+    e = Z-H*(A*X_Forward);
+    S =H*P_Pre*H'+R;  %残差协方差矩阵
+    % 增益矩阵
+    K=P_Pre*H'*inv(S);
 
-% 增益矩阵
-K=P_Pre*H'*inv(H*P_Pre*H'+R)';
+    % 修正滤波值和误差协方差阵
+    X=A*X_Forward+K*(Z-H*(A*X_Forward));
 
-% Pzz = H*P_Forward*H'+ R;                   %S(k+1/k+1) 新息协方差
-% Pxz = P_Forward*H' ;                       %状态与量测之间的协方差
-% K = P_Forward*H'*(inv(Pzz));               %K(k+1) 增益
-    
-e = Z-H*(A*X_Forward);
-S=H*P_Pre*H'+R;  %残差协方差矩阵
-
-% 修正滤波值和误差协方差阵
-X=A*X_Forward+K*(Z-H*(A*X_Forward));
-
-M=K*H;
-n=size(M);
-I=eye(n);
-P=(I-K*H)*P_Pre*(I-K*H)'+ K*R*K';
+    M=K*H;
+    n=size(M);
+    I=eye(n);
+    P=(I-K*H)*P_Pre*(I-K*H)'+ K*R*K';
 end
 
 

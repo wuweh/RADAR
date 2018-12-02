@@ -1,9 +1,11 @@
+%比较CT、CV模型
+
 clc;
 close all;
 clear all;
 
 T = 0.2;
-w = 10/180*pi;  %转向角速度,单位为弧度
+w = 10/180*pi;  %转向角速度,单位为弧度  若w接近于0，轨迹近似于直线运动
 SPM = 100;
 dx = 0.2;
 dy = 0.2;
@@ -37,20 +39,44 @@ P21 =[  1 0 0 0 ;
         0 0 1 0  ;
         0 0 0 1  ; ];
 
-Q1 = [ dx^2,0,0,0;
-        0,dvx^2,0,0;
-        0,0,dy^2,0;
-        0,0,0,dvy^2; ];
+% Q1 = [ dx^2,0,0,0;
+%         0,dvx^2,0,0;
+%         0,0,dy^2,0;
+%         0,0,0,dvy^2; ];
+% 
+% Q = [dx^2,0,0,0,0;
+%      0,dvx^2,0,0,0;
+%      0,0,dy^2,0,0;
+%      0,0,0,dvy^2,0;
+%      0,0,0,0,0.001; ];
 
-Q = [dx^2,0,0,0,0;
-     0,dvx^2,0,0,0;
-     0,0,dy^2,0,0;
-     0,0,0,dvy^2,0;
-     0,0,0,0,0.001; ];
+q = 1;
+Q_CV=[ T^3/3 T^2/2 0 0; 
+       T^2/2 T 0 0; 
+        0 0 T^3/3 T^2/2; 
+        0 0 T^2/2 T]; %转移噪声方差矩阵
+    
+Q_CV = Q_CV.*q;
 
-dx = 2;
-dy = 2;
-R = [dx^2   0;  0    dy^2];
+q = 1;
+qw = 0.1;
+Q_CT=[ q*T^3/3 q*T^2/2 0 0 0; 
+        q*T^2/2 q*T 0 0 0; 
+        0 0 q*T^3/3 q*T^2/2 0; 
+        0 0 q*T^2/2 q*T 0;
+        0 0 0 0 qw*T]; %转移噪声方差矩阵
+    
+Q_CA=[ T^5/20 T^4/8 T^3/6 0 0 0; 
+   T^4/8 T^3/3 T^2/2 0 0 0;
+   T^3/6 T^2/2 T 0 0 0;
+    0 0 0 T^5/20 T^4/8 T^3/6; 
+    0 0 0 T^4/8 T^3/3 T^2/2;
+    0 0 0 T^3/6 T^2/2 T]; %转移噪声方差矩阵
+    
+
+dx = 1;
+dy = 1;
+R = [dx^2,0;0,dy^2];
 
 R1 = R;
   
@@ -67,8 +93,8 @@ end
 ux2 = x(:,1);
 ux3 = x(1:4,1);
 for k = 1:SPM
-    [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q,R);            %调用kf算法 
-    [Xkf1(:,k),P21] = kf(F1,ux3,P21,H1,Z1(:,k),Q1,R1);     %调用kf算法 
+    [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q_CT,R);            %CT
+    [Xkf1(:,k),P21] = kf(F1,ux3,P21,H1,Z1(:,k),Q_CV,R1);     %CV
     ux2 = Xkf(:,k);
     ux3 = Xkf1(:,k);
 end
@@ -97,11 +123,13 @@ delta_x2=x(1,:)-Xkf1(1,:);
 delta_y2=x(3,:)-Xkf1(3,:);
 
 subplot(223)
-plot(x_p,delta_x1,'-ro','MarkerSize',4);hold on;grid on;
-plot(x_p,delta_x2,'-bo','MarkerSize',4);hold on;grid on;
+plot(x_p,abs(delta_x1),'-ro','MarkerSize',4);hold on;grid on;
+plot(x_p,abs(delta_x2),'-bo','MarkerSize',4);hold on;grid on;
+legend('CT模型误差','CV模型误差')
 
 subplot(224)
-plot(x_p,delta_y1,'-ro','MarkerSize',4);hold on;grid on;
-plot(x_p,delta_y2,'-bo','MarkerSize',4);hold on;grid on;
+plot(x_p,abs(delta_y1),'-ro','MarkerSize',4);hold on;grid on;
+plot(x_p,abs(delta_y2),'-bo','MarkerSize',4);hold on;grid on;
+legend('CT模型误差','CV模型误差')
  
  

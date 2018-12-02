@@ -13,7 +13,7 @@ R=1;
 % %读入Hotarget数据文件
 % load Hotarget 
 % T=10;
-% R=1 %ts xys;
+% R=1; %ts xys;
 for n=1:N
     y=xys+sqrt(R)*randn(size(xys));
     %%%%%%%%%%%选择模型参数
