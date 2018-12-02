@@ -1,8 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Change Records
-%   20180629£º1£©First upload
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear all
 close all
@@ -108,7 +103,7 @@ for k=1:N
 %   [Xukf(:,k),P0] = srukf(f,ux,P0,h,Z(:,k),Q,R);      
     [Xukf(:,k),P0] = ukf(f,ux,P0,h,Z(:,k),Q,R);       
     [Xckf(:,k),P1] = ckf(ux1,P1,Z(:,k));           
-%     [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q,R1);    
+    [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q,R1);    
   
     ux  = Xukf(:,k);
     ux1 = Xckf(:,k);
@@ -147,16 +142,14 @@ end
 
 figure
 t=1:N;
-hold on;box on;
-plot(X(1,t),X(2,t),'-b.')        
-plot(Xukf(1,t),Xukf(2,t),'-r.');
-plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'*')
-plot(Xckf(1,t),Xckf(2,t),'-b.');
-% plot(Xkf(1,t),Xkf(2,t),'-g.');
-xlabel('x/m');
-ylabel('y/m');
-% legend('Target','UKF','CKF','KF');
-title('UKF');
+plot(X(1,t),X(2,t),'-b.');hold on;
+plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'*');hold on;
+plot(Xukf(1,t),Xukf(2,t),'-r.');hold on;
+plot(Xckf(1,t),Xckf(2,t),'-b.');hold on;
+plot(Xkf(1,t),Xkf(2,t),'-g.');hold off; grid on;
+title('UKF');xlabel('x/m');ylabel('y/m');
+legend('Real Target','Measure','UKF','CKF','KF');
+
 
 
 

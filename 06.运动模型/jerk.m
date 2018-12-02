@@ -233,9 +233,6 @@ for i=1:MK_num
         Xk0=Xk_Initial;
         XkJ0=XJk_Initial;
 for t=2:1:SAMP-1
-    
-
-        
      Xk(:,t)=F*Xk0;%计算一步预测估计值
      Pk(:,:,t)=FT*P0*FT'+Q;%计算预测滤波协方差矩阵
      K(:,:,t)=Pk(:,:,t)*H'*inv(H*Pk(:,:,t)*H'+R);%计算增益矩阵
@@ -250,13 +247,10 @@ for t=2:1:SAMP-1
      XJk(:,t+1)=XJk(:,t)+KJ(:,:,t)*(Z(:,t)-HJ*XJk(:,t));%计算估计值
      PJk(:,:,t+1)=(eye(8)-KJ(:,:,t)*HJ)*PJk(:,:,t);%计算协方差更新方程
      PJ0=PJk(:,:,t+1);%估计误差协方差阵更新
-     XkJ0=XJk(:,t+1);%估计矩阵更
-     
-     
-
+     XkJ0=XJk(:,t+1);%估计矩阵更  
 end
     XK_all(:,:,i)=Xk;
-     XJK_all(:,:,i)=XJk;
+    XJK_all(:,:,i)=XJk;
 end
 Xk=sum(XK_all,3)/MK_num;
 XJk=sum(XJK_all,3)/MK_num;

@@ -18,7 +18,7 @@ if (noises)
 else
     PQ=Pin;
     xQ=Xin;
-end;
+end
 
  
 [xSigmaPts, wSigmaPts, nsp] = scaledSymmetricSigmaPoints(xQ, PQ, alpha, beta, kappa);
@@ -49,10 +49,7 @@ PPred     = PPred + (wSigmaPts_xmat .* exSigmaPt) * exSigmaPt';
 S         = S + (wSigmaPts_zmat .* ezSigmaPt) * ezSigmaPt';
 PxzPred   = PxzPred + exSigmaPt * (wSigmaPts_zmat .* ezSigmaPt)';
 
- 
 K  = PxzPred / S;
-
- 
 inovation = Z - zPred;
 
  

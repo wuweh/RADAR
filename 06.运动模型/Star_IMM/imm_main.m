@@ -41,7 +41,7 @@ subplot(2,1,2),plot(ts,xys(2,:),ts,C*xx2)
 figure 
 subplot(2,1,1),plot(ts,xys(1,:)-C*xx1)
 subplot(2,1,2),plot(ts,xys(2,:)-C*xx2)
-covv=diag(cov(xys'-[C*xx1;C*xx2]'))
+covv=diag(cov(xys'-[C*xx1;C*xx2]'));
 % 
 summ=summ+covv;
 summ/N;

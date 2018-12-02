@@ -4,8 +4,8 @@
 % 功能说明：ekf,ukf,pf,epf,upf算法的综合比较程序
 function main
 clc;close all;clear all;
-rand('seed',3);
-randn('seed',6);
+% rand('seed',3);
+% randn('seed',6);
 %error('下面的参数T请参考书中的值设置，然后删除本行代码') 
 T = 50;
 R =  0.01;              

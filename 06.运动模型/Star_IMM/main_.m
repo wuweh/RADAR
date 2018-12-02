@@ -1,3 +1,5 @@
+% CA  Star Jerk 
+
 clc
 clear all
 close all
@@ -25,12 +27,13 @@ for n=1:N
     xe_star=zeros(3,1);  
     xe_jerk=zeros(4,1); 
     p=2*eye(3); p_CA = p; p_STAR = p; p_jerk = 2*eye(4);
+    
     %µü´úÖ÷Ñ­»·
-
-    x_ca_model=[];    x_star_model=[];    x_jerk_model=[];
+    x_ca_model=[];    
+    x_star_model=[];    
+    x_jerk_model=[];
     [A_CA,Q_CA]=CAmodel(T,1);
-
-    [A_Jerk,Q_Jerk]=Jerkmodel(T,0.6);
+    [A_Jerk,Q_Jerk]=Jerkmodel(T,0.2);
     for i=1:length(y(1,:))
         xa=xe_star(3);
         [A_STAR,Q_STAR,qa]=Starmodel(T,xa,a,xamax);
@@ -52,7 +55,7 @@ for n=1:N
     y_ca_model=[]; y_star_model = [];y_jerk_model = [];
 
     [A_CA,Q_CA]=CAmodel(T,1);
-    [A_Jerk,Q_Jerk]=Jerkmodel(T,0.6);
+    [A_Jerk,Q_Jerk]=Jerkmodel(T,0.2);
     for i=1:length(y(2,:))
         xa=xe_star(3);
         [A_STAR,Q_STAR,qa]=Starmodel(T,xa,a,xamax);
