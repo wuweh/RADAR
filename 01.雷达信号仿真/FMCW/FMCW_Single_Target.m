@@ -1,6 +1,4 @@
-clc;
-clear all;
-close all;
+clc; clear all; close all;
 
 fc = 77e9; 
 c = 3e8;     
