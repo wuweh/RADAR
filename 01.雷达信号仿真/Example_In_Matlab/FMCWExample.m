@@ -234,12 +234,12 @@ xr = complex(zeros(waveform.SampleRate*waveform.SweepTime,Nsweep));
 
 for m = 1:Nsweep
     % Update radar and target positions
-    [radar_pos,radar_vel] = radarmotion(waveform.SweepTime);
+    [radar_pos,radar_vel] = radarmotion(waveform.SweepTime); %phased.Platform
     [tgt_pos,tgt_vel] = carmotion(waveform.SweepTime);
 
     % Transmit FMCW waveform
     sig = waveform();
-    txsig = transmitter(sig);
+    txsig = transmitter(sig);%transmitter包含了发射功率以及增益
     
     % Propagate the signal and reflect off the target
     txsig = channel(txsig,radar_pos,tgt_pos,radar_vel,tgt_vel);
@@ -247,10 +247,10 @@ for m = 1:Nsweep
     
     % Dechirp the received radar return
     txsig = receiver(txsig);    
-    dechirpsig = dechirp(txsig,sig);
+    dechirpsig = dechirp(txsig,sig); %物理中的混频器
     
     % Visualize the spectrum
-    specanalyzer([txsig dechirpsig]);
+%     specanalyzer([txsig dechirpsig]);
     
     xr(:,m) = dechirpsig;
 end
@@ -298,7 +298,7 @@ clim = caxis;
 
 Dn = fix(fs/(2*fb_max));
 for m = size(xr,2):-1:1
-    xr_d(:,m) = decimate(xr(:,m),Dn,'FIR');
+    xr_d(:,m) = decimate(xr(:,m),Dn,'FIR');  % decimate:降低采样率
 end
 fs_d = fs/Dn;
 

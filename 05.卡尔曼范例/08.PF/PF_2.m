@@ -42,6 +42,7 @@ PCenter(1,:) = mean(x_P);
 for k = 1 : len
     %粒子滤波
     %预测
+    %对每一个粒子进行一次状态更新
     for i = 1 : N
         x = x_P(i,1); vx = x_P(i,2); y = x_P(i,3); vy = x_P(i,4);
         x = x + vx*Ts;
