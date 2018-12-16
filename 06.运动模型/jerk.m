@@ -1,6 +1,6 @@
-close all
-clear all;
-clc;
+% jerk麻隈 and a-jerk麻隈曳熟
+clc;close all;clear all;
+
 %！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 T= 0.5;%寡劔巓豚
 SAMP=600;%寡劔泣方
