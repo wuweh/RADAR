@@ -8,8 +8,8 @@ clc;clear all;close all;
 % 仿真参数
 simTime=200;      %仿真迭代次数
 T=1;                     %采样时间
-w2=7*2*pi/360;     %模型2转弯率3度
-w3=-6*2*pi/360;    %模型3转弯率-3度
+w2=5*2*pi/360;     %模型2转弯率3度
+w3=-5*2*pi/360;    %模型3转弯率-3度
 H=[1,0,0,0;0,0,1,0];                      %模型量测矩阵
 G=[T^2/2,0;T,0;0,T^2/2;0,T];              %模型过程噪声加权矩阵
 r=3^2;                                 %20 2000
@@ -39,7 +39,7 @@ x(:,1)=x0;
 z(:,1)=H*x(:,1)+measureNoise(:,1);
 z_true(:,1)=H*x(:,1);
 for a=2:simTime
-    if (a>=50)&&(a<=120) 
+    if (a>=50)&&(a<=100) 
         x(:,a)=F2*x(:,a-1);      %20--40s左转 
     elseif (a>=140)&&(a<=200) 
        x(:,a)=F3*x(:,a-1);        %60--80s右转 
@@ -80,7 +80,7 @@ pij=[0.95,0.025,0.025;
 %      0.1,0.2,0.7];    %模型转移概率矩阵
 
 u_IMM=zeros(3,simTime);
-u_IMM(:,1)=[1/3,1/3,1/3]';  %IMM算法模型概率
+u_IMM(:,1)=[0.8,0.1,0.1]';  %IMM算法模型概率
 x1_IMM=x0;x2_IMM=x0;x3_IMM=x0;  %IMM算法各模型初始状态
 
 P0=diag([10,10,10,10]);  %初始状态协方差矩阵
@@ -103,8 +103,9 @@ for t=1:simTime-1
     % 计算各模型滤波初始化条件
     x01=x1_IMM*ui1(1)+x2_IMM*ui1(2)+x3_IMM*ui1(3);
     x02=x1_IMM*ui2(1)+x2_IMM*ui2(2)+x3_IMM*ui2(3);
-    x03=x1_IMM*ui3(1)+x2_IMM*ui3(2)+x3_IMM*ui3(3);   %各模型滤波初始状态
+    x03=x1_IMM*ui3(1)+x2_IMM*ui3(2)+x3_IMM*ui3(3);   
     
+    %各模型滤波初始状态协方差矩阵
     P01=(P1_IMM+(x1_IMM-x01)*(x1_IMM-x01)')*ui1(1)+...
         (P2_IMM+(x2_IMM-x01)*(x2_IMM-x01)')*ui1(2)+...
         (P3_IMM+(x3_IMM-x01)*(x3_IMM-x01)')*ui1(3);
@@ -113,7 +114,7 @@ for t=1:simTime-1
         (P3_IMM+(x3_IMM-x02)*(x3_IMM-x02)')*ui2(3);
     P03=(P1_IMM+(x1_IMM-x03)*(x1_IMM-x03)')*ui3(1)+...
         (P2_IMM+(x2_IMM-x03)*(x2_IMM-x03)')*ui3(2)+...
-        (P3_IMM+(x3_IMM-x03)*(x3_IMM-x03)')*ui3(3);  %各模型滤波初始状态协方差矩阵
+        (P3_IMM+(x3_IMM-x03)*(x3_IMM-x03)')*ui3(3);  
     
     %第二步--卡尔曼滤波
     %模型1,2,3标准卡尔曼滤波
@@ -144,18 +145,18 @@ figure(1)
 plot(z_true(1,:),z_true(2,:)); grid on; hold on
 plot(x_pro_IMM(1,:),x_pro_IMM(3,:),'r');
 plot(z(1,:),z(2,:),'*'); 
-plot(x4_rec(1,:),x4_rec(3,:),'b'); 
+plot(x4_rec(1,:),x4_rec(3,:),'b'); grid on
 hold off
 title('目标运动轨迹');
 xlabel('x/m'); ylabel('y/m');
-legend('真实值','滤波值','量测值');text(z(1,1)+500,z(2,1),'t=1');
+legend('真实值','滤波值','量测值');text(z(1,1)+20,z(2,1),'start');
 
 % 位置误差
 figure(2)
 subplot(2,1,1);
 t=1:simTime;
 plot(t,abs(x_pro_IMM(1,t)-x(1,t)),'LineWidth',1);hold on
-plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);hold on;grid on;
+plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);grid on;
 title('x坐标位置跟踪误差');
 xlabel('t/s'); ylabel('x-error/m');
 legend('IMM','CT');
@@ -163,7 +164,7 @@ legend('IMM','CT');
 subplot(2,1,2);
 t=1:simTime;
 plot(t,abs(x_pro_IMM(3,t)-x(3,t)),'LineWidth',1);hold on;
-plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);hold on;grid on;
+plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);grid on;
 title('y坐标位置跟踪误差');
 xlabel('t/s'); ylabel('y-error/m');
 legend('IMM','CT');
