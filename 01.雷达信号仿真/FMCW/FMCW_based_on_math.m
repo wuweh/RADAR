@@ -18,12 +18,12 @@ range_rs = 1;% range resolution
 bw = c/2/range_rs;%sweep bandwidth
 sweep_slope = bw/tm;% slope
 
-fr_max = sweep_slope*2*range_max/c;% beat frequency corresponding to the maximum range
-v_max = 230*1000/3600; %maximum speed is about 230 km/h
-fd_max = 2*v_max/lambda; % maximum doppler frequency
-fb_max = fr_max+fd_max ; %maximum beat frequency
-fs = 10*fb_max; %sampling frequency
-t = 0:1/fs:tm; % sampling time 
+fr_max = sweep_slope*2*range_max/c;                     % beat frequency corresponding to the maximum range
+v_max = 230*1000/3600;                                          %maximum speed is about 230 km/h
+fd_max = 2*v_max/lambda;                                      % maximum doppler frequency
+fb_max = fr_max+fd_max ;                                        %maximum beat frequency
+fs = 10*fb_max;                                                         %sampling frequency
+t = 0:1/fs:tm;                                                              % sampling time 
 
 Nsweep = 64; % pulses number
 Range_FFT_N = 2048;
@@ -36,19 +36,19 @@ speed_fft =  (zeros(Range_FFT_N,Nsweep));
 
 for m = 1:1:Nsweep
     % Ô­Ê¼ÐÅºÅ
-    xr0(:,m) = exp(1i*2*pi*fc*t+1i*pi*sweep_slope*t.^2);
-    
-%     spectrogram(xr0(:,m),128,120,128,1e6,'yaxis')
+%     xr0(:,m) = exp(1i*2*pi*fc*t+1i*pi*sweep_slope*t.^2);
+%     xr0(:,m) = exp(1i*pi*sweep_slope*t.^2);
+%      spectrogram(xr0(:,m),128,120,128,1e6,'yaxis')
     % echo signal_1
     xr1(:,m) = exp(1i*2*pi*(    (2*target_dist/lambda+2*target_speed*(m-1)*tm/lambda)+...
-                                      (    (2*target_dist/c*sweep_slope+2*target_speed/lambda+2*target_speed/c*sweep_slope*(m-1)*tm)*t)+...
-                                           2*target_speed/c*sweep_slope*t.^2)...
-                                      ); 
+                                      (    (2*target_dist/c*sweep_slope+2*target_speed/lambda+2*target_speed/c*sweep_slope*(m-1)*tm)*t)));
+%                                            2*target_speed/c*sweep_slope*t.^2)...
+%                                       ); 
     % echo signal_2
     xr2(:,m) = exp(1i*2*pi*(  (  2*target_dist1/lambda+2*target_speed1*(m-1)*tm/lambda)+...
-                                        (( 2*target_dist1/c*sweep_slope+2*target_speed1/lambda+2*target_speed1/c*sweep_slope*(m-1)*tm)*t)+...
-                                           2*target_speed1/c*sweep_slope*t.^2)...
-                                      ); 
+                                        (( 2*target_dist1/c*sweep_slope+2*target_speed1/lambda+2*target_speed1/c*sweep_slope*(m-1)*tm)*t)));
+%                                            2*target_speed1/c*sweep_slope*t.^2)...
+%                                       ); 
 
     xr = xr1(:,m)+xr2(:,m);
 %     figure(1)

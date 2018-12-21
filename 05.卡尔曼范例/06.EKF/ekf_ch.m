@@ -42,7 +42,7 @@ x_hat = [0,50,500,0]';
 X_est = zeros(len,4);
 x_forecast = zeros(4,1);
 z = zeros(4,1);
-for k=1:len
+for k=2:len
     % 1 ×´Ì¬Ô¤²â    
     x1 = x_hat(1) + x_hat(2)*Ts;
     vx1 = x_hat(2) + (-kx*x_hat(2)^2)*Ts;
@@ -89,5 +89,9 @@ xlabel('X');
 ylabel('Y'); 
 title('EKF simulation');
 legend('real', 'measurement', 'ekf estimated');
+
+figure(2)
+error = sqrt( (X_est(:,1)-Z(:,1).*sin(Z(:,2))).^2+(X_est(:,3)-Z(:,1).*cos(Z(:,2))).^2);
+plot(error,'b*-')
 
  
