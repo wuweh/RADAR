@@ -48,7 +48,7 @@ function [x_putput, P, likehood] = PDA_Function(x_pre, P_pre, fhun, hfun, z_nois
     %¼ÆËãËÆÈ»º¯Êý
     likehoodmea=[];
     for i=1:m
-        likehoodmea(i)=E(i)/(2*pi*sqrt(det(S)));
+        likehoodmea(i)=E(i)/(sqrt(2*pi*det(S)));
     end
     temp=[];
     for i=1:m
