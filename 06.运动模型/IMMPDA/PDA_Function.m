@@ -11,7 +11,7 @@ function [x_putput, P, likehood] = PDA_Function(x_pre, P_pre, fhun, hfun, z_nois
     for j=1:noise_total
         d=z_noise(j,:)'-Z_predic;  
         D(j)=d'*inv(S)*d;  
-        if D(j)<=2
+        if D(j)<=4
             y=[y z_noise(j,:)'];  m=m+1;         
         end 
     end
