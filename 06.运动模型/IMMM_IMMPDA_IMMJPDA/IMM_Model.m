@@ -227,22 +227,6 @@ end
 
 %四、Kalman滤波函数
 function [X,P,e,S]=Kalman(X_Forward,P_Forward,Z,A,G,Q,H,R)
-%卡尔曼滤波2012.2.27   IMM专用，参数略有不同
-%参数说明
-%       Z--观测数据矢量
-%       A--系统模型状态矩阵
-%       G--系统模型噪声系数矩阵
-%       Q--系统模型噪声方差
-%       H--量测系数矩阵
-%       R--量测模型噪声协方差
-%       X_Forward--前次估计状态矢量
-%       P_Forward--前次估计状态协方差矩阵
-
-%       X--输出估计状态矢量
-%       P--输出估计状态协方差矩阵
-%       e--残差
-%       S--残差协方差矩阵
-
     % 预测
     X_Pre=A*X_Forward;
     P_Pre=A*P_Forward*A'+G*Q*G';
