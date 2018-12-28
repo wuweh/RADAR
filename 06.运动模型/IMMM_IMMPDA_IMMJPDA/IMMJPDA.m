@@ -75,7 +75,6 @@ for a=2:simTime
         x2(:,a)=F1*x2(:,a-1);     
     end
     
-    
     z(:,a)=H*x(:,a)+sqrt(R)*randn(2,1);
     z2(:,a)=H*x2(:,a)+sqrt(R)*randn(2,1);
     

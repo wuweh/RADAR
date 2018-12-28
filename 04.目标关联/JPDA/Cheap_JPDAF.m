@@ -7,7 +7,7 @@ Pd=1;
 Pg=0.97;      
 g_sigma=9.21; 
 lambda=8;     
-c=3;                        %target numbers       
+c=3;                           
 gamma=lambda*10^(-6); 
 
 n=50;   
@@ -130,10 +130,9 @@ for M=1:MC_number
         b(1)=data_measurement(3,1,t);
         b(2)=data_measurement(3,2,t);
         y1=[y1 b']; 
-        [n1,n2]=size(y1);
         
         m1=0;                       
-        [n1,n2]=size(y1);
+        [~,n2]=size(y1);
         Q1=zeros(100,3);
         for j=1:n2 
             flag=0;
@@ -142,13 +141,13 @@ for M=1:MC_number
                 D=d'*inv(S(:,:,i))*d; 
                 if D<=g_sigma                                                    
                    flag=1;
-                   Q1(m1+1,1)=1;
-                   Q1(m1+1,i+1)=1;
+%                    Q1(m1+1,1)=1;
+%                    Q1(m1+1,i+1)=1;
                 end
             end
             if flag==1   
                y=[y y1(:,j)];                                                     
-               m1=m1+1                                                   
+               m1=m1+1;                                                  
             end
         end 
 
@@ -193,7 +192,8 @@ end
     a(1:n) = x_filter(1,3,1:n);
     b(1:n) = x_filter(3,3,1:n);
     plot(a,b,'g--.');
-    legend('Measure A','Measure B','Measure C','Noise A','Noise B','Noise C','Filter A','Filter B','Filter C');grid;
+    legend('Measure A','Measure B','Measure C',...
+            'Noise A','Noise B','Noise C','Filter A','Filter B','Filter C');grid;
 
     figure;
     a=0;
@@ -383,35 +383,6 @@ function [X_out, P_out] = cheap_JPDA_xxx(x_predic_in, P_in ,Z_predic_in ,S_in ,n
         P_out(:,:,i)=P(:,:,i)+b; 
         X_out(:,i)=x_filter(:,i);
     end
-    
-%         for i=1:c                                                                  
-%         P_predic = A*P(:,:,i)*A'+G*Q*G';
-%         K(:,:,i)= P_predic*C'*inv(S(:,:,i));
-%         P(:,:,i)= P_predic-(1-U(m1+1,i))*K(:,:,i)*S(:,:,i)*K(:,:,i)';
-%     end
-% 
-%     for i=1:c
-%         a=0;         
-%         b=0;
-% 
-%         x_filter2=0;
-%         for j=1:m1 
-%             x_filter2=x_filter2+U(j,i)*(x_predic(:,i)+ K (:,:,i)*(y(:,j)- Z_predic(:,i)));
-%         end
-%         x_filter2=U(j+1,i)*x_predic(:,i)+x_filter2;
-%         x_filter(:,i,t)=x_filter2;
-% 
-%         for j=1:m1+1
-%             if j==m1+1
-%                 a=x_predic(:,i);
-%             else
-%                a=x_predic(:,i)+ K (:,:,i)*(y(:,j)- Z_predic(:,i));
-%             end
-%             b=b+U(j,i)*(a*a'-x_filter2*x_filter2');
-%         end
-%         P(:,:,i)=P(:,:,i)+b; 
-%         x_filter1(:,i,t,M)=x_filter(:,i,t);
-%     end
     
 end
 
