@@ -46,6 +46,7 @@ function [x_putput, P, likehood] = PDA_Function(x_pre, P_pre, fhun, hfun, z_nois
     x_putput = x_filter(:,1);
     
     %计算似然函数
+    %IMM算法独有
     likehoodmea=[];
     for i=1:m
         likehoodmea(i)=E(i)/(sqrt(2*pi*det(S)));
