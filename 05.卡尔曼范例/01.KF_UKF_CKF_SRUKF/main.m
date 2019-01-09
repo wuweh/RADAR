@@ -1,6 +1,4 @@
-
-clear all
-close all
+clc; clear all; close all
 n=6; 
 t=0.05;
 
@@ -12,23 +10,9 @@ kesi1 = eye(n);
 kesi2 = -eye(n);
 kesi = [kesi1,kesi2]*(sqrt(m/2)); 
 
-
-% Q=[1 0 0 0 0 0;
-%     0 1 0 0 0 0;
-%     0 0 0.001 0 0 0;
-%     0 0 0 1 0 0;
-%     0 0 0 0 1 0;
-%     0 0 0 0 0 0.001];
-% 
-% 
-R = [2^2    0;
-     0      0.002^2];
-
-
+R = [2^2 0; 0 0.002^2];
 Q=0.2*eye(6);
-    
-R1 = [ 2^2    0;
-       0    2^2];
+R1 = [ 2^2 0; 0 2^2];
 
 f=@(x)[ x(1)+t*x(3)+0.5*t^2*x(5);
         x(2)+t*x(4)+0.5*t^2*x(6); 
@@ -55,18 +39,8 @@ gama = h;
 
 %X,Y,VX,VY,Ax,Ay
 s=[70;70;10;20;10;0];
-
 x0=s+sqrtm(Q)*randn(n,1);
-
-
 P0 = eye(6);
-% P0 =[   1 0 0 0 0 0;
-%         0 1 0 0 0 0;
-%         0 0 0.01 0 0 0;
-%         0 0 0 0.01 0 0;
-%         0 0 0 0 0.0001 0;
-%         0 0 0 0 0 0.0001];
-
 N=50;
 
 Xkf = zeros(n,N);
@@ -95,13 +69,12 @@ ux2 = x0;
 
 P1 = P0;
 P2 = P0;
-%  P0 = chol(P0);
 for k=1:N
     Z(:,k)= h(X(:,k)) + sqrtm(R)*randn(2,1);       
     Z1(:,k)= H*X(:,k) + sqrtm(R1)*randn(2,1);       
     
-%   [Xukf(:,k),P0] = srukf(f,ux,P0,h,Z(:,k),Q,R);      
-    [Xukf(:,k),P0] = ukf(f,ux,P0,h,Z(:,k),Q,R);       
+  [Xukf(:,k),P0] = srukf(f,ux,P0,h,Z(:,k),Q,R);      
+%     [Xukf(:,k),P0] = ukf(f,ux,P0,h,Z(:,k),Q,R);       
     [Xckf(:,k),P1] = ckf(ux1,P1,Z(:,k));           
     [Xkf(:,k),P2] = kf(F,ux2,P2,H,Z1(:,k),Q,R1);    
   
@@ -142,7 +115,7 @@ end
 
 figure
 t=1:N;
-plot(X(1,t),X(2,t),'-b.');hold on;
+plot(X(1,t),X(2,t),'-bs','LineWidth',2);hold on;
 plot(Z(1,t).*cos(Z(2,t)),Z(1,t).*sin(Z(2,t)),'*');hold on;
 plot(Xukf(1,t),Xukf(2,t),'-r.');hold on;
 plot(Xckf(1,t),Xckf(2,t),'-b.');hold on;

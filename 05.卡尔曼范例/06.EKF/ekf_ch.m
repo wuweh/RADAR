@@ -1,10 +1,8 @@
-clc;
+clc;close all;clear all;
 syms x vx y vy kx ky g Ts
-Ffun = jacobian([x+vx*Ts; vx-kx*vx^2*Ts;y+vy*Ts; vy+(ky*vy^2-g)*Ts],[x vx y vy]);
-Hfun = jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy]);
+Ffun = jacobian([x+vx*Ts; vx-kx*vx^2*Ts;y+vy*Ts; vy+(ky*vy^2-g)*Ts],[x vx y vy])
+Hfun = jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
 
-close all;
-clear all;
 %真实轨迹模拟
 kx = .01;   ky = .05;       % 阻尼系数
 g = 9.8;                    % 重力

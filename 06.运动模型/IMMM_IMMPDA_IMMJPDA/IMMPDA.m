@@ -136,9 +136,9 @@ for t=1:simTime-1
         (P3_IMM+(x3_IMM-x03)*(x3_IMM-x03)')*ui3(3); 
         
     %IMM基本算法
-    [x1_IMM,P1_IMM,r1_IMM,S1_IMM]=Kalman(x_mean,P01,z_noise(:,:,t+1), F1,G,Q,H,R);
-    [x2_IMM,P2_IMM,r2_IMM,S2_IMM]=Kalman(x_mean,P02,z_noise(:,:,t+1),F2,G,Q,H,R);
-    [x3_IMM,P3_IMM,r3_IMM,S3_IMM]=Kalman(x_mean,P03,z_noise(:,:,t+1),F3,G,Q,H,R);
+    [x1_IMM,P1_IMM,r1_IMM,S1_IMM]=Kalman(x01,P01,z_noise(:,:,t+1), F1,G,Q,H,R);
+    [x2_IMM,P2_IMM,r2_IMM,S2_IMM]=Kalman(x02,P02,z_noise(:,:,t+1),F2,G,Q,H,R);
+    [x3_IMM,P3_IMM,r3_IMM,S3_IMM]=Kalman(x03,P03,z_noise(:,:,t+1),F3,G,Q,H,R);
     %第三步--模型概率更新
     [u_IMM(:,t+1)]=Model_P_up(r1_IMM,r2_IMM,r3_IMM,S1_IMM,S2_IMM,S3_IMM,c_j);
     %第四步--模型综合
@@ -168,24 +168,26 @@ for t=1:simTime-1
         (P2_IMM_PDA+(x2_IMM_PDA-x03)*(x2_IMM_PDA-x03)')*ui3(2)+...
         (P3_IMM_PDA+(x3_IMM_PDA-x03)*(x3_IMM_PDA-x03)')*ui3(3); 
         
-     [x1_IMM_PDA,P1_IMM_PDA,L1] = PDA_Function(x01, P01, F1, H, z_noise(:,:,t+1));
-     [x2_IMM_PDA,P2_IMM_PDA,L2] = PDA_Function(x02, P02, F2, H, z_noise(:,:,t+1));
-     [x3_IMM_PDA,P3_IMM_PDA,L3] = PDA_Function(x03, P03, F3, H, z_noise(:,:,t+1));
-     %第三步--模型概率更新
-     [u_IMM_PDA(:,t+1)] = Model_P_up_PDA(L1,L2,L3,c_j);
+    [x1_IMM_PDA,P1_IMM_PDA,L1] = PDA_Function(x01, P01, F1, H, z_noise(:,:,t+1));
+    [x2_IMM_PDA,P2_IMM_PDA,L2] = PDA_Function(x02, P02, F2, H, z_noise(:,:,t+1));
+    [x3_IMM_PDA,P3_IMM_PDA,L3] = PDA_Function(x03, P03, F3, H, z_noise(:,:,t+1));
+    %第三步--模型概率更新
+    [u_IMM_PDA(:,t+1)] = Model_P_up_PDA(L1,L2,L3,c_j);
     %第四步--模型综合
     [x_pro_IMM_PDA(:,t+1),P_IMM(:,:,t+1)]=Model_mix(x1_IMM_PDA,x2_IMM_PDA,x3_IMM_PDA,P1_IMM_PDA,P2_IMM_PDA,P3_IMM_PDA,u_IMM_PDA(:,t));   
-%     
-     [x4,P4,~,~] = Kalman(x4,P4,z_noise(:,:,t+1),F1,G,Q,H,R);
-     x4_rec(:,t+1) = x4;
+
+    
+    
+%     [x4,P4,~,~] = Kalman(x4,P4,z_noise(:,:,t+1),F1,G,Q,H,R);
+%     x4_rec(:,t+1) = x4;
 end
 
 
 figure
-plot(x(1,:),x(3,:),'*-'); hold on;grid on;
-plot(x_pro_IMM(1,:),x_pro_IMM(3,:),'s-');
-plot(x_pro_IMM_PDA(1,:),x_pro_IMM_PDA(3,:),'s-');
-plot(x4_rec(1,:),x4_rec(3,:),'s-');
+plot(x(1,:),x(3,:),'*-','LineWidth',1); hold on;grid on;
+plot(x_pro_IMM(1,:),x_pro_IMM(3,:),'s-','LineWidth',1);
+plot(x_pro_IMM_PDA(1,:),x_pro_IMM_PDA(3,:),'s-','LineWidth',1);
+plot(x4_rec(1,:),x4_rec(3,:),'s-','LineWidth',1);
 legend('Real','IMM','IMMPDA','CT');
 % % 模型概率
 % t=1:simTime;
@@ -209,7 +211,7 @@ subplot(2,1,1);
 t=1:simTime;
 plot(t,abs(x_pro_IMM(1,t)-x(1,t)),'LineWidth',1);hold on;grid on
 plot(t,abs(x_pro_IMM_PDA(1,t)-x(1,t)),'LineWidth',1);hold on;grid on
-plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);grid on;
+% plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);grid on;
 title('x坐标位置跟踪误差');
 xlabel('t/s'); ylabel('x-error/m');
 legend('IMM','IMMPDA','CT');
@@ -218,7 +220,7 @@ subplot(2,1,2);
 t=1:simTime;
 plot(t,abs(x_pro_IMM(3,t)-x(3,t)),'LineWidth',1);hold on;grid on
 plot(t,abs(x_pro_IMM_PDA(3,t)-x(3,t)),'LineWidth',1);hold on;grid on
-plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);grid on;
+% plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);grid on;
 title('y坐标位置跟踪误差');
 xlabel('t/s'); ylabel('y-error/m');
 legend('IMM','IMMPDA','CT');
