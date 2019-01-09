@@ -1,11 +1,11 @@
-
-syms x vx y vy kx ky g T
-jacobian([x+vx*T; vx-kx*vx^2*T;y+vy*T; vy+(ky*vy^2-g)*T],[x vx y vy])
-jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy])
+clc;
+syms x vx y vy kx ky g Ts
+Ffun = jacobian([x+vx*Ts; vx-kx*vx^2*Ts;y+vy*Ts; vy+(ky*vy^2-g)*Ts],[x vx y vy]);
+Hfun = jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy]);
 
 close all;
 clear all;
-%%  真实轨迹模拟
+%真实轨迹模拟
 kx = .01;   ky = .05;       % 阻尼系数
 g = 9.8;                    % 重力
 t = 30;                     % 仿真时间
@@ -16,14 +16,16 @@ X = zeros(len,4);
 X(1,:) = [0, 50, 500, 0]; % 状态模拟的初值
 for k=2:len
     x = X(k-1,1); vx = X(k-1,2); y = X(k-1,3); vy = X(k-1,4); 
+    
     x = x + vx*Ts;
     vx = vx + (-kx*vx^2+dax*randn(1,1))*Ts;
     y = y + vy*Ts;
     vy = vy + (ky*vy^2-g+day*randn(1))*Ts;
+    
     X(k,:) = [x, vx, y, vy];
 end
 
-%%  构造量测量
+%构造量测量
 mrad = 0.001;
 dr = 4; dafa = 10*mrad; % 量测噪声
 for k=1:len
@@ -33,14 +35,15 @@ for k=1:len
 end
 
 
-%% ekf 滤波
+%ekf 滤波
 Qk = diag([0; dax/10; 0; day/10])^2;
 Rk = diag([dr; dafa])^2;
 Pk = 10*eye(4);
 Pkk_1 = 10*eye(4);
 x_hat = [0,50,500,0]';
 X_est = zeros(len,4);
-x_forecast = zeros(4,1);
+X_est(1,:)  = X(1,:);
+x_forecast = X(1,:) ;
 z = zeros(4,1);
 for k=2:len
     % 1 状态预测    
@@ -63,6 +66,9 @@ for k=2:len
     F(3,3) = 1;  
     F(3,4) = Ts;
     F(4,4) = 1+2*ky*vy*Ts;
+    
+%     F = jacobian([x+vx*Ts; vx-kx*vx^2*Ts;y+vy*Ts; vy+(ky*vy^2-g)*Ts],[x vx y vy]);
+    
     Pkk_1 = F*Pk*F'+Qk;
     
     % 观测矩阵
@@ -73,25 +79,24 @@ for k=2:len
     H(1,3) = y/r;
     H(2,1) = (1/y)/xy2;  
     H(2,3) = (-x/y^2)/xy2;
+%     H= jacobian([sqrt(x^2+y^2);atan(x/y)],[x vx y vy]);
     
     Kk = Pkk_1*H'*(H*Pkk_1*H'+Rk)^-1;       %计算增益
     x_hat = x_forecast+Kk*(Z(k,:)'-y_yuce);      %校正
     Pk = (eye(4)-Kk*H)*Pkk_1;
     X_est(k,:) = x_hat;
 end
-%% 
+
 figure(1);
 plot(X(:,1),X(:,3),'-b.'); hold on; grid on;axis([0 400 0 550])
-pause(1);
 plot(Z(:,1).*sin(Z(:,2)), Z(:,1).*cos(Z(:,2)),'*'); hold on;
 plot(X_est(:,1),X_est(:,3), '-r.'); hold on;
-xlabel('X'); 
-ylabel('Y'); 
+xlabel('X'); ylabel('Y'); 
 title('EKF simulation');
 legend('real', 'measurement', 'ekf estimated');
 
 figure(2)
 error = sqrt( (X_est(:,1)-Z(:,1).*sin(Z(:,2))).^2+(X_est(:,3)-Z(:,1).*cos(Z(:,2))).^2);
-plot(error,'b*-')
+plot(error,'b*-');grid on;
 
  

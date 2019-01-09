@@ -125,8 +125,8 @@ for t=1:n
     end 
      
     %% PDA_Function
-    [x_putput, P] = PDA_Function(x_predic, P_predic, S, Z_predic, K,y, m);
     
+    [x_putput, P] = PDA_Function(x_predic, P_predic, S, Z_predic, K,y, m);
     x_filter(:,t) = x_putput;
     sumx = sumx + x_filter(1,t);
     x_filter1(:,t) = x_filter(:,t);
