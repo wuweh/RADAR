@@ -50,19 +50,19 @@ hwav = phased.FMCWWaveform('SweepTime',tm,'SweepBandwidth',bw, 'SampleRate',fs);
 
 % 形成波形
 s = step(hwav);
-%实部即信号的幅度！！！！
-% subplot(211); plot(0:1/fs:tm-1/fs,real(s));
-% xlabel('Time (s)'); ylabel('Amplitude (v)');
-% title('FMCW signal'); axis tight;
+% 实部即信号的幅度！！！！
+subplot(211); plot(0:1/fs:tm-1/fs,real(s));
+xlabel('Time (s)'); ylabel('Amplitude (v)');
+title('FMCW signal'); axis tight;
 
-%spectrogram: 用短时傅里叶变换
-%16阶hanmming windows；
-%0 sample overlap
+% spectrogram: 用短时傅里叶变换
+% 16阶hanmming windows；
+% 0 sample overlap
 % 4096点FFT
-%采样频率为fs
-%发射波形频谱图
-% subplot(212); spectrogram(s,32,16,4096,fs,'yaxis');
-% title('FMCW signal spectrogram');
+% 采样频率为fs
+% 发射波形频谱图
+subplot(212); spectrogram(s,32,16,32,fs,'yaxis');
+title('FMCW signal spectrogram');
 
 car_dist = 30;
 car_speed = 100*1000/3600;

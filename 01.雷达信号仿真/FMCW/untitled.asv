@@ -16,15 +16,11 @@ maxVel = velRes*NumDFFT/2;       % Max velocity
 tarR = [50; 90];                 % Target range
 tarV = [3; 20];                  % Target velocity
 
-fs = N/T;
-t = 0:1/fs:T;
-k = B/T;
-
 figure;
-xr0(:,1) = exp(1i*pi*k*(t.^2));
+xr0(:,1) = exp(1i*pi*((B/T)*((0:N)/N)).^2);
 
 subplot(211); plot(real(xr0(:,1)));
-xlabel('Time'); ylabel('Amplitude (v)');
+xlabel('Time (s)'); ylabel('Amplitude (v)');
 title('FMCW signal'); axis tight;
 
 % spectrogram: 用短时傅里叶变换
@@ -33,7 +29,7 @@ title('FMCW signal'); axis tight;
 % 32点FFT
 % 采样频率为fs
 % 发射波形频谱图
-subplot(212); spectrogram(xr0(:,1),16,8,512,N/T,'yaxis');
+subplot(212); spectrogram(xr0(:,1),32,16,32,N/T,'yaxis');
 title('FMCW signal spectrogram');
 
 
@@ -61,7 +57,6 @@ for ii = 1:L
     sigRWin(ii,:) = sigReceive(ii,:).*hamming(N)';
 end
  
-figure;
 %% range fft processing
 sigRfft = zeros(L,NumRFFT);
 range = ((1:NumRFFT)-1)*(N/T)/NumRFFT*c*T/B/2;
