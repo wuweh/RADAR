@@ -1,6 +1,6 @@
 function [x_putput, P] = PDA_Function(x_predic, P_predic, S, Z_predic,K, y, m)
-    global Pd Pg gamma C;
-    Bk=gamma*sqrt(det(S)*2*3.14)*(1-Pd*Pg)/Pd;    
+    global Pd Pg lambda C;
+    Bk=lambda*sqrt(det(S)*2*3.14)*(1-Pd*Pg)/Pd;    
     if m==0 
        x_filter(:,1)= x_predic; 
        P=P_predic;    
@@ -13,8 +13,8 @@ function [x_putput, P] = PDA_Function(x_predic, P_predic, S, Z_predic,K, y, m)
         end 
 
         belta0=Bk/(Bk+sum(E));    
-        v=zeros(4,1); 
-        v1=zeros(4,1); 
+        v=zeros(2,1); 
+        v1=zeros(2,2); 
         for i=1:m 
             belta(i)=E(i)/(Bk+sum(E));     
             v=v+belta(i)*(y(:,i)-Z_predic); 

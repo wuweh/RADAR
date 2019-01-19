@@ -7,7 +7,7 @@ t=0.2;
 q=0.3; %std of process
 r=0.5; %std of measurement
 Q=q^2*eye(n); % covariance of process 
-R=r^2; % covariance of measurement 
+R=r^1; % covariance of measurement 
 %f=@(x)[x(2);x(3);0.05*x(1)*(x(2)+x(3))]; % nonlinear state equations
 %实际方程
 f=@(x)[x(1)+t*x(3);x(2)+t*x(4);x(3)+t*x(5);x(4)+t*x(6);x(5);x(6)]; % nonlinear state equations

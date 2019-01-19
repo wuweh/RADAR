@@ -1,3 +1,4 @@
+%正确的基于数学公式的信号仿真
 clc;clear all;close all;
 
 fc = 77e9;%center frequency
