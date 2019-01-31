@@ -65,97 +65,97 @@ function  JPDAF(target_position,n,T,MC_number,c)
     x_filter1=zeros(4,c,n,MC_number);                                                  
     data_measurement=zeros(c,2,n);                                                    
 
-for M=1:MC_number
-    Noise=[];
-    for i=1:n
-        for j=1:c                                                                      
-            data_measurement(j,:,i)= C*target_position_real(j,:,i)'+sqrtm(Q)*randn(2,1)*100;
-        end
-    end
-    S=zeros(2,2,c);
-    Z_predic=zeros(2,2);                                                               
-    x_predic=zeros(4,2);                                                               
-    ellipse_Volume=zeros(1,2);
-
-    NOISE_sum_a=[]; 
-    NOISE_sum_b=[];
-    NOISE_sum_c=[];
-
-    for t=1:n
-        y1=[];
-        y=[];
+    for M=1:MC_number
         Noise=[];
-        NOISE=[];
-
-        for i=1:c      
-            if t~=1
-                x_predic(:,i) = A*x_filter(:,i,t-1);      
-            else
-                x_predic(:,i)=target_position(i,:)';                                                   
-            end
-
-            P_predic=A*P(:,:,i)*A'+G*Q*G';                                                
-            Z_predic(:,i)=C*x_predic(:,i);                                                 
-            R=[target_delta(i)^2 0; 0 target_delta(i)^2];
-            S(:,:,i)=C*P_predic*C'+R;   
-            ellipse_Volume(i)= pi*g_sigma*sqrt(det(S(:,:,i)));         
-             number_returns=floor(ellipse_Volume(i)*gamma+1);        
-           % number_returns = 2;       
-            side=sqrt((ellipse_Volume(i)*gamma+1)/gamma)/2;            
-            Noise_x=data_measurement(i,1,t)+side-2*rand(1,number_returns)*side;  
-            Noise_y=data_measurement(i,2,t)+side-2*rand(1,number_returns)*side;    
-            Noise=[Noise_x;Noise_y];
-            NOISE=[NOISE Noise];
-
-            if i==1
-                NOISE_sum_a =[NOISE_sum_a Noise]; 
-            end
-
-           if i==2
-                NOISE_sum_b =[NOISE_sum_b Noise]; 
-           end
-
-           if i==3
-                NOISE_sum_c =[NOISE_sum_c Noise]; 
+        for i=1:n
+            for j=1:c                                                                      
+                data_measurement(j,:,i)= C*target_position_real(j,:,i)'+sqrtm(Q)*randn(2,1)*100;
             end
         end
+        S=zeros(2,2,c);
+        Z_predic=zeros(2,2);                                                               
+        x_predic=zeros(4,2);                                                               
+        ellipse_Volume=zeros(1,2);
 
-        b=zeros(1,2);
-        b(1)=data_measurement(1,1,t);
-        b(2)=data_measurement(1,2,t);
-        y1=[NOISE b'];               
-        b(1)=data_measurement(2,1,t);
-        b(2)=data_measurement(2,2,t);
-        y1=[y1 b'];                  
-        b(1)=data_measurement(3,1,t);
-        b(2)=data_measurement(3,2,t);
-        y1=[y1 b']; 
-        
-        m1=0;                       
-        [~,n2]=size(y1);
-        Q1=zeros(100,3);
-        for j=1:n2 
-            flag=0;
-            for i=1:c
-                d=y1(:,j)-Z_predic(:,i);
-                D=d'*inv(S(:,:,i))*d; 
-                if D<=g_sigma                                                    
-                   flag=1;
-%                    Q1(m1+1,1)=1;
-%                    Q1(m1+1,i+1)=1;
+        NOISE_sum_a=[]; 
+        NOISE_sum_b=[];
+        NOISE_sum_c=[];
+
+        for t=1:n
+            y1=[];
+            y=[];
+            Noise=[];
+            NOISE=[];
+
+            for i=1:c      
+                if t~=1
+                    x_predic(:,i) = A*x_filter(:,i,t-1);      
+                else
+                    x_predic(:,i)=target_position(i,:)';                                                   
+                end
+
+                P_predic=A*P(:,:,i)*A'+G*Q*G';                                                
+                Z_predic(:,i)=C*x_predic(:,i);                                                 
+                R=[target_delta(i)^2 0; 0 target_delta(i)^2];
+                S(:,:,i)=C*P_predic*C'+R;   
+                ellipse_Volume(i)= pi*g_sigma*sqrt(det(S(:,:,i)));         
+                 number_returns=floor(ellipse_Volume(i)*gamma+1);        
+               % number_returns = 2;       
+                side=sqrt((ellipse_Volume(i)*gamma+1)/gamma)/2;            
+                Noise_x=data_measurement(i,1,t)+side-2*rand(1,number_returns)*side;  
+                Noise_y=data_measurement(i,2,t)+side-2*rand(1,number_returns)*side;    
+                Noise=[Noise_x;Noise_y];
+                NOISE=[NOISE Noise];
+
+                if i==1
+                    NOISE_sum_a =[NOISE_sum_a Noise]; 
+                end
+
+               if i==2
+                    NOISE_sum_b =[NOISE_sum_b Noise]; 
+               end
+
+               if i==3
+                    NOISE_sum_c =[NOISE_sum_c Noise]; 
                 end
             end
-            if flag==1   
-               y=[y y1(:,j)];                                                     
-               m1=m1+1;                                                  
-            end
-        end 
 
-     [x_filter(:,:,t), P] = cheap_JPDA_xxx(x_predic, P ,Z_predic ,S ,3, y, m1, A, C, G*Q*G');
-     x_filter1(:,:,t,M)  = x_filter(:,:,t);
-     
+            b=zeros(1,2);
+            b(1)=data_measurement(1,1,t);
+            b(2)=data_measurement(1,2,t);
+            y1=[NOISE b'];               
+            b(1)=data_measurement(2,1,t);
+            b(2)=data_measurement(2,2,t);
+            y1=[y1 b'];                  
+            b(1)=data_measurement(3,1,t);
+            b(2)=data_measurement(3,2,t);
+            y1=[y1 b']; 
+
+            m1=0;                       
+            [~,n2]=size(y1);
+            Q1=zeros(100,3);
+            for j=1:n2 
+                flag=0;
+                for i=1:c
+                    d=y1(:,j)-Z_predic(:,i);
+                    D=d'*inv(S(:,:,i))*d; 
+                    if D<=g_sigma                                                    
+                       flag=1;
+    %                    Q1(m1+1,1)=1;
+    %                    Q1(m1+1,i+1)=1;
+                    end
+                end
+                if flag==1   
+                   y=[y y1(:,j)];                                                     
+                   m1=m1+1;                                                  
+                end
+            end 
+
+         [x_filter(:,:,t), P] = cheap_JPDA_xxx(x_predic, P ,Z_predic ,S ,3, y, m1, A, C, G*Q*G');
+         x_filter1(:,:,t,M)  = x_filter(:,:,t);
+
+        end
     end
-end
 
     %%下面是作图部分
     x_filter=sum(x_filter1,4)/MC_number;  

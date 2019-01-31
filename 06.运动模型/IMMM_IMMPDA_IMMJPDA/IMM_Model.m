@@ -139,6 +139,7 @@ end
 %===============================
 %绘图
 figure(1)
+subplot(211)
 plot(z_true(1,:),z_true(2,:)); grid on; hold on
 plot(x_pro_IMM(1,:),x_pro_IMM(3,:),'r');
 plot(z(1,:),z(2,:),'*'); 
@@ -148,23 +149,23 @@ title('目标运动轨迹');
 xlabel('x/m'); ylabel('y/m');
 legend('真实值','滤波值','量测值');text(z(1,1)+20,z(2,1),'start');
 
-% 位置误差
-figure(2)
-subplot(2,1,1);
-t=1:simTime;
-plot(t,abs(x_pro_IMM(1,t)-x(1,t)),'LineWidth',1);hold on
-plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);grid on;
-title('x坐标位置跟踪误差');
-xlabel('t/s'); ylabel('x-error/m');
-legend('IMM','CT');
-
-subplot(2,1,2);
-t=1:simTime;
-plot(t,abs(x_pro_IMM(3,t)-x(3,t)),'LineWidth',1);hold on;
-plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);grid on;
-title('y坐标位置跟踪误差');
-xlabel('t/s'); ylabel('y-error/m');
-legend('IMM','CT');
+% % 位置误差
+% figure(2)
+% subplot(2,1,1);
+% t=1:simTime;
+% plot(t,abs(x_pro_IMM(1,t)-x(1,t)),'LineWidth',1);hold on
+% plot(t,abs(x4_rec(1,t)-x(1,t)),'LineWidth',1);grid on;
+% title('x坐标位置跟踪误差');
+% xlabel('t/s'); ylabel('x-error/m');
+% legend('IMM','CT');
+% 
+% subplot(2,1,2);
+% t=1:simTime;
+% plot(t,abs(x_pro_IMM(3,t)-x(3,t)),'LineWidth',1);hold on;
+% plot(t,abs(x4_rec(3,t)-x(3,t)),'LineWidth',1);grid on;
+% title('y坐标位置跟踪误差');
+% xlabel('t/s'); ylabel('y-error/m');
+% legend('IMM','CT');
 
 % % 速度误差
 % figure(3)
@@ -182,7 +183,8 @@ legend('IMM','CT');
 % 
 % 模型概率
 t=1:simTime;
-figure(4)
+figure(1)
+subplot(212)
 plot(t,u_IMM(1,t),'k.-',t,u_IMM(2,t),'r.-',t,u_IMM(3,t),'b.-');grid on
 title('IMM算法模型概率曲线');
 axis([0 simTime-1 0 1])

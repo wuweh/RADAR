@@ -1,16 +1,11 @@
 function [x_putput, P, likehood] = IMMJPDA_Function(x_pre, P_pre, ffun, hfun, z_noise, num, U)
-    global Pd Pg gamma G Q R;
+    global Pg G Q R;
 
     x_predic_in = ffun*x_pre;
     P_predic = ffun*P_pre*ffun'+G*Q*G'; 
     Z_predic_in = hfun*x_predic_in;
     S = hfun*P_predic*hfun'+ R; 
     K = P_predic*hfun'*inv(S);
-    
-   %Kalman filter
-                                                                  
-    P_predic = ffun*P_pre*ffun'+G*Q*G';
-    K= P_predic*hfun'*inv(S);
     P= P_predic-(1-U(num+1))*K*S*K';
 
     a=0;         
@@ -37,6 +32,9 @@ function [x_putput, P, likehood] = IMMJPDA_Function(x_pre, P_pre, ffun, hfun, z_
     %计算似然函数
     temp=[];
     for i=1:num
+        v1 = z_noise(:,i)-Z_predic_in;
+        v = (-0.5*v1'*inv(S)*v1);
+        U(i) = exp(v)/(sqrt(2*3.14*det(S)));%似然函数
         LL = U(i)*Pg^(-1);
         temp=[temp LL];
     end
